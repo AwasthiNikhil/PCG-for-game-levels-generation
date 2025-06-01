@@ -198,7 +198,6 @@
         alert('Please upload a valid .txt file.');
         return;
       }
-
       const reader = new FileReader();
       reader.onload = (event) => {
         const text = event.target.result.trim();

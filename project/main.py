@@ -2,12 +2,13 @@ from classes.Grid import Grid
 from classes.LevelPostProcessor import LevelPostProcessor
 from classes.random.RandomLevelGenerator import RandomLevelGenerator
 from classes.perlin.NativePerlinLevelGenerator import NativePerlinLevelGenerator
+from classes.simplex.SimplexLevelGenerator import SimplexLevelGenerator
+from classes.cellularautomata.CellularAutomataLevelGenerator import CellularAutomataLevelGenerator
 
 # delimeter for html parsing, remove later
 print("<<<")
 
-grid = Grid(60,48)
-
+grid = Grid(100, 100)
 
 types_of_levels_string = """
 1. Random Generation
@@ -23,14 +24,17 @@ types_of_levels_string = """
 
 level_type = input(types_of_levels_string)
 
-
 match level_type:
     case '1':
-        # print('1 selected\n')     
         level_generator = RandomLevelGenerator(grid)
-        # provide user with slider to change wall/floor ratio or increase difficulty with each level
     case '2':
-        level_generator = NativePerlinLevelGenerator(grid)
+        level_generator = NativePerlinLevelGenerator(grid,scale=5)
+    case '3':
+        level_generator = SimplexLevelGenerator(grid)
+    case '4':
+        level_generator = CellularAutomataLevelGenerator(grid)
+    case _:
+        print('No type selected. Execution completed.')
 
 level_generator.generate()
 
@@ -38,7 +42,7 @@ match level_type:
     case '1':   
         post_processor = LevelPostProcessor(grid)
         post_processor.remove_isolated_walls()
-    # case '2':   
+    # case '3':   
     #     post_processor = LevelPostProcessor(grid)
     #     post_processor.remove_isolated_walls()
         

@@ -73,7 +73,6 @@ class NativePerlinLevelGenerator:
             seed = random.randint(0,1000)
             random.seed(seed)
             
-        
         print(f'seed:{seed}')
         grad_table = generate_gradient_table(self.grid.width, self.grid.height)
 
