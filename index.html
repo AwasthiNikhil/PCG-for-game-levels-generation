@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Dynamic Map Renderer</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 0;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+
+    textarea {
+      width: 90%;
+      max-width: 1000px;
+      height: 200px;
+      font-family: monospace;
+      font-size: 14px;
+      padding: 8px;
+      margin-bottom: 10px;
+    }
+
+    .controls, .color-picker, .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    canvas {
+      border: 1px solid #ccc;
+      cursor: grab;
+    }
+
+    input[type="range"] {
+      width: 120px;
+    }
+
+    input[type="color"] {
+      width: 40px;
+      height: 30px;
+    }
+
+    button {
+      padding: 8px 14px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>Map Renderer</h2>
+
+  <textarea id="data-input" placeholder="Paste map data here..."></textarea>
+
+  <div class="controls">
+    <label>Cell Size: <span id="cell-size-value">2</span> px</label>
+    <input type="range" id="cell-size" min="1" max="20" value="2">
+    <button onclick="renderMap()">Render Map</button>
+  </div>
+
+  <div class="color-picker">
+    <label>Empty:</label><input type="color" id="empty-color" value="#ffffff">
+    <label>Floor:</label><input type="color" id="floor-color" value="#dddddd">
+    <label>Wall:</label><input type="color" id="wall-color" value="#444444">
+  </div>
+
+  <div class="buttons">
+    <button onclick="exportMapTxt()">Export TXT</button>
+    <button onclick="exportImage()">Export PNG</button>
+    <input type="file" accept=".txt" onchange="importMapTxt(this.files[0])" />
+  </div>
+
+  <canvas id="map-canvas" width="800" height="600"></canvas>
+
+  <script>
+    const cellSizeInput = document.getElementById('cell-size');
+    const cellSizeValue = document.getElementById('cell-size-value');
+    const emptyColorInput = document.getElementById('empty-color');
+    const floorColorInput = document.getElementById('floor-color');
+    const wallColorInput = document.getElementById('wall-color');
+    const canvas = document.getElementById('map-canvas');
+    const ctx = canvas.getContext('2d');
+    const textarea = document.getElementById('data-input');
+
+    let mapData = [];
+    let cellSize = parseInt(cellSizeInput.value);
+    let offsetX = 0, offsetY = 0;
+    let scale = 1;
+
+    cellSizeInput.addEventListener('input', () => {
+      cellSize = parseInt(cellSizeInput.value);
+      cellSizeValue.textContent = cellSize;
+      renderMap();
+    });
+
+    textarea.addEventListener('input', () => {
+      // Keep map data in sync with textarea
+      const text = textarea.value;
+      mapData = parseInput(text);
+      renderMap();
+    });
+
+    function parseInput(input) {
+      const lines = input.split('\n');
+      let insideIgnored = false;
+      const result = [];
+
+      for (const line of lines) {
+        const trimmed = line.trim();
+
+        if (trimmed === '<<<') {
+          insideIgnored = true;
+          continue;
+        }
+
+        if (trimmed === '>>>') {
+          insideIgnored = false;
+          continue;
+        }
+
+        if (insideIgnored || trimmed === '') continue;
+
+        result.push(trimmed.split(/\s+/).map(Number));
+      }
+
+      return result;
+    }
+
+    function renderMap() {
+      if (!mapData.length) return;
+
+      const rowCount = mapData.length;
+      const colCount = Math.max(...mapData.map(row => row.length));
+
+      canvas.width = colCount * cellSize;
+      canvas.height = rowCount * cellSize;
+
+      const colors = {
+        0: emptyColorInput.value,
+        1: floorColorInput.value,
+        2: wallColorInput.value
+      };
+
+      ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
+      ctx.clearRect(-offsetX / scale, -offsetY / scale, canvas.width / scale, canvas.height / scale);
+
+      for (let y = 0; y < rowCount; y++) {
+        for (let x = 0; x < mapData[y].length; x++) {
+          const val = mapData[y][x] ?? 0;
+          ctx.fillStyle = colors[val];
+          ctx.fillRect(x * cellSize, y * cellSize, cellSize, cellSize);
+        }
+      }
+    }
+
+    // Zoom and pan
+    let isDragging = false;
+    let lastX = 0, lastY = 0;
+
+    canvas.addEventListener('mousedown', (e) => {
+      isDragging = true;
+      lastX = e.offsetX;
+      lastY = e.offsetY;
+      canvas.style.cursor = 'grabbing';
+    });
+
+    canvas.addEventListener('mouseup', () => {
+      isDragging = false;
+      canvas.style.cursor = 'grab';
+    });
+
+    canvas.addEventListener('mousemove', (e) => {
+      if (isDragging) {
+        offsetX += (e.offsetX - lastX);
+        offsetY += (e.offsetY - lastY);
+        lastX = e.offsetX;
+        lastY = e.offsetY;
+        renderMap();
+      }
+    });
+
+    canvas.addEventListener('wheel', (e) => {
+      e.preventDefault();
+      const zoomFactor = e.deltaY < 0 ? 1.1 : 0.9;
+      scale *= zoomFactor;
+      renderMap();
+    });
+
+    function importMapTxt(file) {
+      if (!file || !file.name.endsWith('.txt')) {
+        alert('Please upload a valid .txt file.');
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const text = event.target.result.trim();
+        textarea.value = text;
+        mapData = parseInput(text);
+        renderMap();
+      };
+      reader.onerror = () => {
+        alert('Failed to read file. Please try again.');
+      };
+
+      reader.readAsText(file);
+    }
+
+    function exportMapTxt() {
+      const text = textarea.value.trim();
+      const blob = new Blob([text], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'map.txt';
+      a.click();
+    }
+
+    function exportImage() {
+      const link = document.createElement('a');
+      link.download = 'map.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+  </script>
+
+</body>
+</html>
