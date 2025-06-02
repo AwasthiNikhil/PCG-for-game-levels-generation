@@ -4,11 +4,12 @@ from classes.random.RandomLevelGenerator import RandomLevelGenerator
 from classes.perlin.NativePerlinLevelGenerator import NativePerlinLevelGenerator
 from classes.simplex.SimplexLevelGenerator import SimplexLevelGenerator
 from classes.cellularautomata.CellularAutomataLevelGenerator import CellularAutomataLevelGenerator
+from classes.bsp.BSPLevelGenerator import BSPLevelGenerator
 
 # delimeter for html parsing, remove later
 print("<<<")
 
-grid = Grid(100, 100)
+grid = Grid(100,100)
 
 types_of_levels_string = """
 1. Random Generation
@@ -33,6 +34,8 @@ match level_type:
         level_generator = SimplexLevelGenerator(grid)
     case '4':
         level_generator = CellularAutomataLevelGenerator(grid)
+    case '5':
+        level_generator = BSPLevelGenerator(grid, min_leaf_size=8, max_leaf_size=15)
     case _:
         print('No type selected. Execution completed.')
 
