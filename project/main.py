@@ -21,8 +21,6 @@ types_of_levels_string = """
 5. Binary Space Partitioning (BSP)
 6. Wave Function Collapse (WFC)
 7. Graph-Based Generation
-8. Markov Chains / Probabilistic Models
-9. Evolutionary Algorithms / Genetic Algorithms
 """
 
 level_type = input(types_of_levels_string)
@@ -42,6 +40,8 @@ match level_type:
         level_generator = WFCLevelGenerator(grid)
     case '7':
         level_generator = GraphLevelGenerator(grid)
+    case '8':
+       print()
     case _:
         print('No type selected. Execution completed.')
 
