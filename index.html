@@ -66,9 +66,12 @@
   </div>
 
   <div class="color-picker">
-    <label>Empty:</label><input type="color" id="empty-color" value="#ffffff">
-    <label>Floor:</label><input type="color" id="floor-color" value="#dddddd">
-    <label>Wall:</label><input type="color" id="wall-color" value="#444444">
+    <label for="empty-color">Empty:</label><input type="color" id="empty-color" value="#ffffff">
+    <!-- <label for="floor-color">Floor:</label><input type="color" id="floor-color" value="#dddddd"> -->
+    <label for="floor-color">Floor:</label><input type="color" id="floor-color" value="#047e02">
+    <label for="wall-color">Wall:</label><input type="color" id="wall-color" value="#444444">
+    <label for="water-color">Water:</label><input type="color" id="water-color" value="#9ed0ff">
+    <label for="sand-color">Sand:</label><input type="color" id="sand-color" value="#754d4d">
   </div>
 
   <div class="buttons">
@@ -85,6 +88,8 @@
     const emptyColorInput = document.getElementById('empty-color');
     const floorColorInput = document.getElementById('floor-color');
     const wallColorInput = document.getElementById('wall-color');
+    const waterColorInput = document.getElementById('water-color');
+    const sandColorInput = document.getElementById('sand-color');
     const canvas = document.getElementById('map-canvas');
     const ctx = canvas.getContext('2d');
     const textarea = document.getElementById('data-input');
@@ -145,7 +150,9 @@
       const colors = {
         0: emptyColorInput.value,
         1: floorColorInput.value,
-        2: wallColorInput.value
+        2: wallColorInput.value,
+        3: waterColorInput.value,
+        4: sandColorInput.value
       };
 
       ctx.setTransform(scale, 0, 0, scale, offsetX, offsetY);
