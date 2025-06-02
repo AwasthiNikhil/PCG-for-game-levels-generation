@@ -40,8 +40,6 @@ match level_type:
         level_generator = WFCLevelGenerator(grid)
     case '7':
         level_generator = GraphLevelGenerator(grid)
-    case '8':
-       print()
     case _:
         print('No type selected. Execution completed.')
 
