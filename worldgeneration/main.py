@@ -11,7 +11,7 @@ from classes.graph.GraphLevelGenerator import GraphLevelGenerator
 # delimeter for html parsing, remove later
 print("<<<")
 
-grid = Grid(100,100)
+grid = Grid(40,40)
 
 types_of_levels_string = """
 1. Random Generation
@@ -29,7 +29,7 @@ match level_type:
     case '1':
         level_generator = RandomLevelGenerator(grid)
     case '2':
-        level_generator = NativePerlinLevelGenerator(grid,scale=5)
+        level_generator = NativePerlinLevelGenerator(grid,scale=2)
     case '3':
         level_generator = SimplexLevelGenerator(grid)
     case '4':
@@ -43,7 +43,7 @@ match level_type:
     case _:
         print('No type selected. Execution completed.')
 
-level_generator.generate()
+level_generator.generate(seed=127)
 
 match level_type:
     case '1':   
