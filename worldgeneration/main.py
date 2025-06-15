@@ -43,7 +43,7 @@ match level_type:
     case _:
         print('No type selected. Execution completed.')
 
-level_generator.generate(seed=127)
+level_generator.generate()
 
 match level_type:
     case '1':   
