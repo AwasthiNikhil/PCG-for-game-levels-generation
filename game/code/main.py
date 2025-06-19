@@ -1,5 +1,6 @@
 from settings import *
 from levelloader import *
+from player import *
 
 class Game():
     def __init__(self):
@@ -11,7 +12,9 @@ class Game():
         
         self.all_sprites = pygame.sprite.Group()
         self.collision_sprites = pygame.sprite.Group()        
+        
         lvl = LevelLoader('../output',self.all_sprites)
+        player = Player((400, 300), self.all_sprites)
         
         self.running = True
     
@@ -24,9 +27,8 @@ class Game():
                     self.running = False
             
             self.display_surface.fill('black')
-
-            
-            
+            self.all_sprites.update(dt) 
+                
             self.all_sprites.draw(self.display_surface)
             pygame.display.update()
         
