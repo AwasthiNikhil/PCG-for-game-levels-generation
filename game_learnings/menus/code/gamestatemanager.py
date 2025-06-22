@@ -30,9 +30,9 @@ class GameStateManager:
 
     def main_menu(self):
         buttons = [
-            Button("Play", SCREEN_WIDTH // 2 - 100, 200, 200, 50, lambda: self.push_state("generation_menu")),
-            Button("Options", SCREEN_WIDTH // 2 - 100, 300, 200, 50, lambda: self.push_state("options")),
-            Button("Exit", SCREEN_WIDTH // 2 - 100, 400, 200, 50, lambda: sys.exit())
+            Button("Play", SCREEN_WIDTH // 2 - 100, 200, BUTTON_WIDTH, BUTTON_HEIGHT, lambda: self.push_state("generation_menu")),
+            Button("Options", SCREEN_WIDTH // 2 - 100, 300, BUTTON_WIDTH, BUTTON_HEIGHT, lambda: self.push_state("options")),
+            Button("Exit", SCREEN_WIDTH // 2 - 100, 400, BUTTON_WIDTH, BUTTON_HEIGHT, lambda: sys.exit())
         ]
         selected_index = [0]
 
@@ -93,14 +93,14 @@ class GameStateManager:
 
     def generation_menu(self):
         buttons = [
-            Button("Random Generation", SCREEN_WIDTH // 2 - 150, 100, 300, 50, lambda: self.push_state("play")),
-            Button("Perlin", SCREEN_WIDTH // 2 - 150, 160, 300, 50, lambda: self.push_state("play")),
-            Button("Simplex", SCREEN_WIDTH // 2 - 150, 220, 300, 50, lambda: self.push_state("play")),
-            Button("Cellular Automata", SCREEN_WIDTH // 2 - 150, 280, 300, 50, lambda: self.push_state("play")),
-            Button("Binary Space Partitioning (BSP)", SCREEN_WIDTH // 2 - 150, 340, 300, 50, lambda: self.push_state("play")),
-            Button("Wave Function Collapse (WFC)", SCREEN_WIDTH // 2 - 150, 400, 300, 50, lambda: self.push_state("play")),
-            Button("Graph-Based Generation", SCREEN_WIDTH // 2 - 150, 460, 300, 50, lambda: self.push_state("play")),
-            Button("Back", SCREEN_WIDTH // 2 - 150, 520, 300, 50, lambda: self.pop_state())
+            Button("Random Generation", SCREEN_WIDTH // 2 - 150, 100, BUTTON_WIDTH_L, 50, lambda: self.push_state("play")),
+            Button("Perlin", SCREEN_WIDTH // 2 - 150, 160, BUTTON_WIDTH_L, 50, lambda: self.push_state("play")),
+            Button("Simplex", SCREEN_WIDTH // 2 - 150, 220, BUTTON_WIDTH_L, 50, lambda: self.push_state("play")),
+            Button("Cellular Automata", SCREEN_WIDTH // 2 - 150, 280, BUTTON_WIDTH_L, 50, lambda: self.push_state("play")),
+            Button("Binary Space Partitioning (BSP)", SCREEN_WIDTH // 2 - 150, 340, BUTTON_WIDTH_L, 50, lambda: self.push_state("play")),
+            Button("Wave Function Collapse (WFC)", SCREEN_WIDTH // 2 - 150, 400, BUTTON_WIDTH_L, 50, lambda: self.push_state("play")),
+            Button("Graph-Based Generation", SCREEN_WIDTH // 2 - 150, 460, BUTTON_WIDTH_L, 50, lambda: self.push_state("play")),
+            Button("Back", SCREEN_WIDTH // 2 - 150, 520, BUTTON_WIDTH_L, 50, lambda: self.pop_state())
         ]
         selected_index = [0]
 
