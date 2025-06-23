@@ -1,8 +1,8 @@
 from settings import *
-# from levelloader import *
-from levelloader2 import *
+from levelloader import *
 from sprites import *
 from groups import *
+from support import *
 
 class Game():
     def __init__(self):
@@ -14,13 +14,16 @@ class Game():
         
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()        
-        
-        # lvl = LevelLoader('../output',self.all_sprites)
-        
+                
+        # load game
+        self.load_assets()
         self.setup()
         
+    def load_assets(self):
+        self.player_frames = import_folder('images','player')
+        
     def setup(self):
-        self.level_data = LevelLoader2('../output')
+        self.level_data = LevelLoader('../output')
         
         for y, row in enumerate(self.level_data.get_grid()):
             for x, block in enumerate(row):
@@ -41,7 +44,7 @@ class Game():
                     CollisionSprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.collision_sprites)
                 
         # TODO: Find first 2*2 ground block where player can spawn 
-        self.player = Player((600,300), self.all_sprites, self.collision_sprites)    
+        self.player = Player((PLAYER['x'], PLAYER['y']), self.all_sprites, self.collision_sprites, self.player_frames)    
         
 
         
