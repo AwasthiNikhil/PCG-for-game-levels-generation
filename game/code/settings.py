@@ -4,7 +4,7 @@ from os.path import join
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
 
-BLOCK_SIZE = 128
+BLOCK_SIZE = 256
 PLAYER_SIZE = 32
 
 BLOCKS = {
