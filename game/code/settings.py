@@ -12,7 +12,7 @@ PLAYER = {
     'x': 500,
     'y': 900
 }
-JUMP = 25
+JUMP = 75
 
 BLOCKS = {
     1: {'color':'light green', 'name':'floor'},

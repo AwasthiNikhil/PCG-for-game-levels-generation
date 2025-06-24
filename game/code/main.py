@@ -23,9 +23,10 @@ class Game():
         self.player_frames = import_folder('images','player')
         
     def setup(self):
-        self.level_data = LevelLoader('../output')
+        self.level_loader = LevelLoader('../output')
+        self.level_data = self.level_loader.get_grid()
         
-        for y, row in enumerate(self.level_data.get_grid()):
+        for y, row in enumerate(self.level_data):
             for x, block in enumerate(row):
                 block_info = BLOCKS.get(block)
                 if block_info:  # Ensure it's a valid block
@@ -34,7 +35,7 @@ class Game():
                     image.fill(color)
                     Sprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.all_sprites)
         
-        for y, row in enumerate(self.level_data.get_grid()):
+        for y, row in enumerate(self.level_data):
             for x, block in enumerate(row):
                 block_info = BLOCKS.get(block)
                 if block_info and block_info['name'] == 'wall':
@@ -43,9 +44,22 @@ class Game():
                     image.fill(color)
                     CollisionSprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.collision_sprites)
                 
+                        
+                
         # TODO: Find first 2*2 ground block where player can spawn 
-        self.player = Player((PLAYER['x'], PLAYER['y']), self.all_sprites, self.collision_sprites, self.player_frames)    
-        
+        self.player = Player(self.get_spawnable_player_position(), self.all_sprites, self.collision_sprites, self.player_frames)    
+      
+    def get_spawnable_player_position(self):
+        for y in range(len(self.level_data) - 1):  
+            for x in range(len(self.level_data[y]) - 1): 
+                if (self.level_data[y][x] == 1 and
+                    self.level_data[y][x + 1] == 1 and
+                    self.level_data[y + 1][x] == 1 and
+                    self.level_data[y + 1][x + 1] == 1):
+                    # Return the top-left corner of the found 2x2 area
+                    return (x*BLOCK_SIZE, y*BLOCK_SIZE)
+        # Return None if no spawnable position was found
+        return None
 
         
     def run(self):
