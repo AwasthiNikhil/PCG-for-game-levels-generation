@@ -79,9 +79,9 @@ class CollisionSprite(pygame.sprite.Sprite):
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, pos, surf, groups):
         super().__init__(groups)
-        
         self.image = surf
         self.rect = self.image.get_frect(topleft = pos)
+        self.type = 'ground'
 
 
 class AnimatedSprite(Sprite):
@@ -98,6 +98,7 @@ class Player(AnimatedSprite):
     def __init__(self, pos, groups, collision_sprites, frames):
 
         super().__init__(frames, pos, groups)
+        self.type = 'object'
         self.flip = False
         
         # movement and collision
@@ -115,11 +116,8 @@ class Player(AnimatedSprite):
         # self.direction = self.direction.normalize() if self.direction else self.direction
         
         if keys[pygame.K_SPACE] and self.on_floor:
-            self.direction.y = -50
+            self.direction.y = -JUMP
         
-        # if keys[pygame.K_SPACE] and not self.shoot_timer:
-        #     self.create_bullet(self.rect.center, -1 if self.flip else 1)
-        #     self.shoot_timer.activate()
             
         
     def move(self, dt):
