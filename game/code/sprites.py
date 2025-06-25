@@ -104,8 +104,8 @@ class Player(AnimatedSprite):
         # movement and collision
         self.direction = pygame.Vector2()
         self.collision_sprites = collision_sprites
-        self.speed = 400
-        self.gravity = 50
+        self.speed = PLAYER_SPEED
+        self.gravity = PLAYER_GRAVITY
         self.on_floor = False
         
         

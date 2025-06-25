@@ -1,6 +1,6 @@
-
 import math
 import random
+from ..settings import *
 
 def fade(t):
     """Smoothstep function to ease the interpolation"""
@@ -56,15 +56,11 @@ def perlin(x, y, grad_table):
 
     return nxy  # Typically in range [-1, 1]
 
-
-
 class NativePerlinLevelGenerator:
     def __init__(self, grid, scale=2.0, threshold=0.0):
         self.grid = grid
         self.scale = scale
         self.threshold = threshold
-        self.floor_char = '1'
-        self.wall_char = '2'
 
     def generate(self, seed=None):
         if seed is not None:
@@ -83,6 +79,13 @@ class NativePerlinLevelGenerator:
                 n = perlin(nx, ny, grad_table)
 
                 if n < self.threshold:
-                    self.grid.grid[y][x] = self.wall_char
+                    self.grid.grid[y][x] = WALL_CHAR
                 else:
-                    self.grid.grid[y][x] = self.floor_char
+                    self.grid.grid[y][x] = FLOOR_CHAR
+        for x in range(self.grid.width):
+            self.grid.grid[0][x-1] = WALL_CHAR  # Top boundary
+            self.grid.grid[self.grid.height - 1][x-1] = WALL_CHAR  # Bottom boundary
+
+        for y in range(self.grid.height):
+            self.grid.grid[y-1][0] = WALL_CHAR  # Left boundary
+            self.grid.grid[y-1][self.grid.width - 1] = WALL_CHAR  # Right boundary

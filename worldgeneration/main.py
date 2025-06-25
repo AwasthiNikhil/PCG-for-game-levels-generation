@@ -11,7 +11,7 @@ from classes.graph.GraphLevelGenerator import GraphLevelGenerator
 # delimeter for html parsing, remove later
 print("<<<")
 
-grid = Grid(100,100)
+grid = Grid(50,20)
 
 types_of_levels_string = """
 1. Random Generation

@@ -1,0 +1,2 @@
+FLOOR_CHAR = '1'
+WALL_CHAR = '2'
