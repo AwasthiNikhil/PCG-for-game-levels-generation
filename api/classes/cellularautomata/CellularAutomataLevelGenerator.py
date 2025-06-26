@@ -1,8 +1,8 @@
 import random
 class CellularAutomataLevelGenerator:
-    def __init__(self, grid, fill_percent=0.55, iterations=1):
+    def __init__(self, grid, wall_probability=0.55, iterations=1):
         self.grid = grid
-        self.fill_percent = fill_percent  # Initial wall chance
+        self.fill_percent = wall_probability  # Initial wall chance
         self.iterations = iterations
         self.floor_char = '1'
         self.wall_char = '2'

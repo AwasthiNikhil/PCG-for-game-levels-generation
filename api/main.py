@@ -1,4 +1,4 @@
-from flask import Flask, Response
+from flask import Flask, request, Response
 from io import StringIO
 import sys
 
@@ -21,30 +21,56 @@ def generate_level(level_type):
     sys.stdout = mystdout = StringIO()
 
     print("<<<")  # Start delimiter
+    
+    # --- Parse optional query parameters ---
 
-    grid = Grid(25, 25)
+    def safe_int(val, default):
+        try:
+            return int(val)
+        except (TypeError, ValueError):
+            return default
+
+    def safe_float(val, default):
+        try:
+            return float(val)
+        except (TypeError, ValueError):
+            return default
+
+    # --- Safely parse query parameters ---
+    width = safe_int(request.args.get('x'), 25)
+    height = safe_int(request.args.get('y'), 25)
+    seed = request.args.get('seed', None)
+    scale = safe_float(request.args.get('scale'), 2.0)
+    min_leaf_size = safe_int(request.args.get('min_leaf_size'), 8)
+    max_leaf_size = safe_int(request.args.get('max_leaf_size'), 15)
+    wall_probability = safe_float(request.args.get('wall_probability'), 0.45)
+    threshold = safe_int(request.args.get('threshold'), 4)
+    min_room_size = safe_int(request.args.get('min_room_size'), 3)
+    max_rooms = safe_int(request.args.get('max_rooms'), 15)
+    
+    grid = Grid(width, height)
 
     level_generator = None
 
     if level_type == 1:
         level_generator = RandomLevelGenerator(grid)
     elif level_type == 2:
-        level_generator = NativePerlinLevelGenerator(grid, scale=2)
+        level_generator = NativePerlinLevelGenerator(grid, scale=scale)
     elif level_type == 3:
         level_generator = SimplexLevelGenerator(grid)
     elif level_type == 4:
         level_generator = CellularAutomataLevelGenerator(grid)
     elif level_type == 5:
-        level_generator = BSPLevelGenerator(grid, min_leaf_size=8, max_leaf_size=15)
+        level_generator = BSPLevelGenerator(grid, min_leaf_size=min_leaf_size, max_leaf_size=max_leaf_size)
     elif level_type == 6:
-        level_generator = GraphLevelGenerator(grid)
+        level_generator = GraphLevelGenerator(grid, max_rooms=max_rooms, room_min_size=min_room_size, room_max_size=max_rooms)
     else:
         print("No type selected. Execution completed.")
         print(">>>")
         sys.stdout = old_stdout
         return Response(mystdout.getvalue(), mimetype='text/plain')
 
-    level_generator.generate()
+    level_generator.generate(seed=seed)
 
     if level_type == 1:
         post_processor = LevelPostProcessor(grid)
