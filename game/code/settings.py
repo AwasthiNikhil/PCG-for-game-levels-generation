@@ -1,6 +1,7 @@
 import pygame
 from os.path import join
 from os import walk
+from random import choice, random, choices
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -12,7 +13,7 @@ PLAYER = {
     'x': 500,
     'y': 900
 }
-JUMP = 25
+JUMP = 50
 PLAYER_SPEED = 400
 PLAYER_GRAVITY = 25
 

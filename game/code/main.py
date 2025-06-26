@@ -14,6 +14,8 @@ class Game():
         
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()        
+        self.exit_sprite = pygame.sprite.Group()        
+        self.collectible_sprite = pygame.sprite.Group()        
                 
         # load game
         self.load_assets()
@@ -43,13 +45,18 @@ class Game():
                     image =  pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))    
                     image.fill(color)
                     CollisionSprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.collision_sprites)
-                
-                        
-                
-        # TODO: Find first 2*2 ground block where player can spawn 
-        self.player = Player(self.get_spawnable_player_position(), self.all_sprites, self.collision_sprites, self.player_frames)    
-      
-    def get_spawnable_player_position(self):
+                                
+        self.exit_door = ExitDoor(self.get_exit_spawnable_position(), (self.all_sprites, self.exit_sprite))
+        self.exit_key = Key(self.get_item_spawnable_position(), (self.all_sprites, self.collectible_sprite))
+        self.player = Player(self.get_player_spawnable_position(), self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames)    
+
+        self.log()    
+        
+    def log(self):
+        print(self.get_player_spawnable_position())
+        print(self.get_item_spawnable_position())
+    
+    def get_player_spawnable_position(self):
         for y in range(len(self.level_data) - 1):  
             for x in range(len(self.level_data[y]) - 1): 
                 if (self.level_data[y][x] == 1 and
@@ -60,6 +67,30 @@ class Game():
                     return (x*BLOCK_SIZE, y*BLOCK_SIZE)
         # Return None if no spawnable position was found
         return None
+    
+    def get_exit_spawnable_position(self):
+        potential_positions = []
+        for y in range(len(self.level_data) - 1):  
+            for x in range(len(self.level_data[y])):
+                if (self.level_data[y][x] == 1 and self.level_data[y + 1][x] == 1):
+                    # Store the position of the top cell of the 2x1 space
+                    potential_positions.append((x*BLOCK_SIZE, y*BLOCK_SIZE))
+        if potential_positions:
+            return choice(potential_positions)
+    
+    def get_item_spawnable_position(self):
+        potential_positions = []
+        for y in range(len(self.level_data)): 
+            for x in range(len(self.level_data[y])):
+                if self.level_data[y][x] == 1:  # Check if the cell is a floor
+                    # Store the position of the cell
+                    potential_positions.append((x * BLOCK_SIZE, y * BLOCK_SIZE))
+        
+        if potential_positions:
+            # Create a list of weights (for simplicity, all weights are equal)
+            weights = [1] * len(potential_positions)
+            return choices(potential_positions, weights=weights, k=1)[0]  # Select one position based on weights
+        return None  # Return None if no spawnable position was found
 
         
     def run(self):
