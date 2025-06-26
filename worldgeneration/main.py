@@ -11,7 +11,7 @@ from classes.graph.GraphLevelGenerator import GraphLevelGenerator
 # delimeter for html parsing, remove later
 print("<<<")
 
-grid = Grid(50,20)
+grid = Grid(25,25)
 
 types_of_levels_string = """
 1. Random Generation
@@ -19,8 +19,7 @@ types_of_levels_string = """
 3. Simplex
 4. Cellular Automata
 5. Binary Space Partitioning (BSP)
-6. Wave Function Collapse (WFC)
-7. Graph-Based Generation
+6. Graph-Based Generation
 """
 
 level_type = input(types_of_levels_string)
@@ -37,9 +36,10 @@ match level_type:
     case '5':
         level_generator = BSPLevelGenerator(grid, min_leaf_size=8, max_leaf_size=15)
     case '6':
-        level_generator = WFCLevelGenerator(grid)
-    case '7':
         level_generator = GraphLevelGenerator(grid)
+    # case '7':
+    #     level_generator = GraphLevelGenerator(grid)
+        # level_generator = WFCLevelGenerator(grid)
     case _:
         print('No type selected. Execution completed.')
 

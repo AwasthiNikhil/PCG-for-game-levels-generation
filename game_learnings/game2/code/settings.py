@@ -8,7 +8,7 @@ SIZE = {
 }
 SPEED={
     'player': 500,
-    'opponent': 400,
+    'opponent': 100,
     'ball': 450
 }
 POS = {

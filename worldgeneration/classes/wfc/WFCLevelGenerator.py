@@ -3,7 +3,7 @@ import random
 class WFCLevelGenerator:
     def __init__(self, grid, tile_rules=None):
         self.grid = grid
-        self.tile_types = ['1', '2', '3', '4']  # Floor, Wall, Water, Sand
+        self.tile_types = ['1', '2']  # Floor and Wall only
         self.floor_char = '1'
         self.wall_char = '2'
         self.tile_rules = tile_rules or self._default_tile_rules()
@@ -15,7 +15,15 @@ class WFCLevelGenerator:
         else:
             seed = random.randint(0, 1000)
             random.seed(seed)
-        print(f'seed:{seed}')
+        print(f'seed: {seed}')
+
+        # Randomly collapse some cells to start with
+        for y in range(self.grid.height):
+            for x in range(self.grid.width):
+                if random.random() < 0.5:  # 50% chance to start with a floor
+                    self.wave[y][x] = {'1'}
+                else:
+                    self.wave[y][x] = {'2'}
 
         while True:
             cell = self._find_lowest_entropy_cell()
@@ -82,27 +90,15 @@ class WFCLevelGenerator:
     def _default_tile_rules(self):
         return {
             '1': {  # Floor
-                'N': ['1', '2', '4'],
-                'S': ['1', '2', '4'],
-                'E': ['1', '2', '4'],
-                'W': ['1', '2', '4'],
-            },
-            '2': {  # Wall
-                'N': ['1', '2'],
+                'N': ['1', '2'],  # Floor can be next to Floor or Wall
                 'S': ['1', '2'],
                 'E': ['1', '2'],
                 'W': ['1', '2'],
             },
-            '3': {  # Water
-                'N': ['3', '4'],
-                'S': ['3', '4'],
-                'E': ['3', '4'],
-                'W': ['3', '4'],
-            },
-            '4': {  # Sand
-                'N': ['3', '4', '1'],
-                'S': ['3', '4', '1'],
-                'E': ['3', '4', '1'],
-                'W': ['3', '4', '1'],
+            '2': {  # Wall
+                'N': ['2'],  # Wall can only be next to Wall
+                'S': ['2'],
+                'E': ['2'],
+                'W': ['2'],
             },
         }

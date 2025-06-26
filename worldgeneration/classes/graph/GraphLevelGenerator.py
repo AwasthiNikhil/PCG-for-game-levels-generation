@@ -1,7 +1,7 @@
 import random
 
 class GraphLevelGenerator:
-    def __init__(self, grid, max_rooms=15, room_min_size=8, room_max_size=16):
+    def __init__(self, grid, max_rooms=15, room_min_size=3, room_max_size=10):
         # todo: check edge cases like min cells cant contain max room etc 
         self.grid = grid
         self.max_rooms = max_rooms
