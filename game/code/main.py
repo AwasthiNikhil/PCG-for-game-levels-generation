@@ -30,11 +30,18 @@ class Game():
             f'&max_rooms={QUERY_PARAMS["MAX_ROOMS"]}'
             f'&iterations={QUERY_PARAMS["ITERATIONS"]}'
         )
-
+        
         # load game
         self.load_assets()
         self.setup()
         self.log()   
+        
+        self.gui_logger = pygame.Surface((500,200), pygame.SRCALPHA)
+        self.gui_logger_rect = self.gui_logger.get_rect(topright=(SCREEN_WIDTH-10, 10))
+        self.gui_font = pygame.font.Font(None, 24)
+        
+        self.log_gui()
+        
 
     def load_assets(self):
         self.player_frames = import_folder('images','player')
@@ -62,9 +69,13 @@ class Game():
                     image.fill(color)
                     CollisionSprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.collision_sprites)
                                 
-        self.exit_door = ExitDoor(self.get_exit_spawnable_position(), (self.all_sprites, self.exit_sprite))
-        self.exit_key = Key(self.get_item_spawnable_position(), (self.all_sprites, self.collectible_sprite))
-        self.player = Player(self.get_player_spawnable_position(), self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames)    
+        self.exit_position = self.get_exit_spawnable_position()
+        self.item_position = self.get_item_spawnable_position()
+        self.player_position = self.get_player_spawnable_position()
+        
+        self.exit_door = ExitDoor(self.exit_position, (self.all_sprites, self.exit_sprite))
+        self.exit_key = Key(self.item_position, (self.all_sprites, self.collectible_sprite))
+        self.player = Player(self.player_position, self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames)    
     
     def log(self):
         print('Current Level Data:')
@@ -72,9 +83,29 @@ class Game():
             print(f'{param}: {QUERY_PARAMS[param]}')
     
         print('---------------------------------------')
-        print('Player: ', self.get_player_spawnable_position())
-        print('Key', self.get_item_spawnable_position())
-        print('Exit', self.get_exit_spawnable_position())
+        print('Player: ', self.player_position)
+        print('Key', self.item_position)
+        print('Exit', self.exit_position)
+    
+    def log_gui(self):
+        pygame.draw.rect(
+            surface=self.gui_logger,           # the surface you're drawing on
+            color=(255,255,255, 100),              # fill color (with alpha if using SRCALPHA)
+            rect=self.gui_logger.get_rect(),  # rectangle to draw
+            border_radius=10                  # ← this gives rounded corners
+        )
+        GUI_TEXT = (
+            f'Current Level URL: {self.current_level_url}',
+            f'Player Position: {self.player.rect.center}',
+            f'Key Position: {self.item_position}',
+            f'Exit Position: {self.exit_position}',
+            f'Player Speed: {PLAYER_SPEED}',
+            f'Player Jump: {JUMP}',
+        )
+        for i, text in enumerate(GUI_TEXT):
+            text_surface = self.gui_font.render(text, True, (0, 0, 0))
+            self.gui_logger.blit(text_surface, (10, 10 + i * 30))
+        
     
     def get_player_spawnable_position(self):
         for y in range(len(self.level_data) - 1):  
@@ -126,8 +157,11 @@ class Game():
                 
             # draw
             self.all_sprites.draw(self.player.rect.center)
-            pygame.display.update()
             
+            self.log_gui()
+            self.display_surface.blit(self.gui_logger,  self.gui_logger.get_rect(topright=(SCREEN_WIDTH - 10, 10)))
+            
+            pygame.display.update()
             
         
         pygame.quit()
