@@ -1,0 +1,3 @@
+@startuml classes_Settings
+set namespaceSeparator none
+@enduml

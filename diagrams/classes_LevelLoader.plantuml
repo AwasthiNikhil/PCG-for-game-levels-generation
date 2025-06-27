@@ -1,0 +1,9 @@
+@startuml classes_LevelLoader
+set namespaceSeparator none
+class "LevelLoader" as game.code.levelloader.LevelLoader {
+  grid
+  level
+  get_grid()
+  parse_level(level_data)
+}
+@enduml

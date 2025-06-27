@@ -50,11 +50,17 @@ class Game():
         # felt cute might delete later
         self.remaining_time = 0
         self.countdown_timer = Timer(20000, func = self.countdown, autostart = True, repeat = False)
-        self.timer_surface = pygame.Surface((200,100), pygame.SRCALPHA)
+        self.timer_surface = pygame.Surface((200,50), pygame.SRCALPHA)
         self.timer_surface_rect = self.timer_surface.get_rect(midtop=(SCREEN_WIDTH/2, 10))
         self.game_over_surface = pygame.Surface((SCREEN_WIDTH,SCREEN_HEIGHT), pygame.SRCALPHA)
         self.game_over_surface_rect = self.game_over_surface.get_rect(center=(SCREEN_WIDTH/2, SCREEN_HEIGHT/2))
         
+    def interpolate_color(self, start_color, end_color, factor):
+        r = int(start_color[0] * (1 - factor) + end_color[0] * factor)
+        g = int(start_color[1] * (1 - factor) + end_color[1] * factor)
+        b = int(start_color[2] * (1 - factor) + end_color[2] * factor)
+        return (r, g, b)
+    
     def countdown(self):
         if self.remaining_time:
             # Calculate the remaining time
@@ -69,29 +75,32 @@ class Game():
             else:
                 remaining_percentage = 0
 
-            # Draw the timer surface
-            self.timer_surface.fill((0, 0, 0, 0))  # Clear previous frame
-
+            self.timer_surface.fill((0, 0, 0, 0))  
             # Draw the background of the bar
             pygame.draw.rect(
                 surface=self.timer_surface,
-                color=(255, 255, 255, 50),  # Light gray background for the bar
+                color=(255, 255, 255, 50),  
                 rect=(0, 0, self.timer_surface.get_width(), self.timer_surface.get_height()), 
                 border_radius=10
             )
 
-            # Draw the countdown bar (based on remaining percentage)
+            start_color = (0, 255, 0)
+            end_color = (255, 0, 0)  
+            
+            current_color = self.interpolate_color(start_color, end_color, 1 - remaining_percentage)
+             
             bar_width = self.timer_surface.get_width() * remaining_percentage
+            
             pygame.draw.rect(
                 surface=self.timer_surface,
-                color=(0, 255, 0),  # Green color for the countdown bar
+                color=current_color,  
                 rect=(0, 0, bar_width, self.timer_surface.get_height()),  # Fill up to the calculated width
                 border_radius=10
             )
 
             # Display the remaining time as text in the middle of the bar
             time_text = f"{minutes:02}:{seconds:02}"
-            text_surface = self.gui_font.render(time_text, True, (0, 0, 0))  # Black text
+            text_surface = self.gui_font.render(time_text, True, (0, 0, 0))  
             text_rect = text_surface.get_rect(center=self.timer_surface.get_rect().center)
             self.timer_surface.blit(text_surface, text_rect.topleft)
     

@@ -1,0 +1,8 @@
+@startuml classes_Groups
+set namespaceSeparator none
+class "AllSprites" as game.code.groups.AllSprites {
+  display_surface
+  offset
+  draw(target_position)
+}
+@enduml

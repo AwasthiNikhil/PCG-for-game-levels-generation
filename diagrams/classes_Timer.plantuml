@@ -1,0 +1,14 @@
+@startuml classes_Timer
+set namespaceSeparator none
+class "Timer" as game.code.timer.Timer {
+  active : bool
+  duration
+  func : NoneType
+  remaining_time
+  repeat : bool
+  start_time : int
+  activate()
+  deactivate()
+  update()
+}
+@enduml

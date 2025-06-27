@@ -1,0 +1,48 @@
+@startuml classes_Game
+set namespaceSeparator none
+class "Game" as game.code.main.Game {
+  all_sprites
+  clock
+  collectible_sprite
+  collision_sprites
+  countdown_timer
+  current_level_url
+  display_surface
+  exit_door
+  exit_key
+  exit_position
+  exit_sprite
+  game_over_surface
+  game_over_surface_rect
+  gui_font
+  gui_font_big
+  gui_logger
+  gui_logger_rect
+  item_position : NoneType
+  level_data
+  level_height
+  level_loader
+  level_width
+  new_level_url
+  player
+  player_frames
+  player_position : NoneType, tuple
+  remaining_time : int
+  running : bool
+  timer_surface
+  timer_surface_rect
+  countdown()
+  game_over_func()
+  get_exit_spawnable_position()
+  get_item_spawnable_position()
+  get_new_level()
+  get_player_spawnable_position()
+  interpolate_color(start_color, end_color, factor)
+  load_assets()
+  log()
+  log_gui()
+  reset_query_params()
+  run()
+  setup()
+}
+@enduml

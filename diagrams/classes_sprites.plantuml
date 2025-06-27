@@ -1,0 +1,56 @@
+@startuml classes_sprites
+set namespaceSeparator none
+class "AnimatedSprite" as game.code.sprites.AnimatedSprite {
+  animation_speed : int
+  frame_index : int
+  frames
+  image
+  animate(dt)
+}
+class "Coin" as game.code.sprites.Coin {
+  type : str
+}
+class "CollisionSprite" as game.code.sprites.CollisionSprite {
+  image
+  rect
+}
+class "ExitDoor" as game.code.sprites.ExitDoor {
+  type : str
+}
+class "Key" as game.code.sprites.Key {
+  type : str
+}
+class "Player" as game.code.sprites.Player {
+  collectible_sprite
+  collision_sprites
+  direction
+  exit_sprite
+  flip : bool
+  frame_index : int
+  get_new_level
+  gravity
+  has_key : bool
+  image
+  on_floor : bool
+  speed
+  type : str
+  animate(dt)
+  check_collectible()
+  check_finish()
+  check_floor()
+  collision(direction)
+  input()
+  move(dt)
+  update(dt)
+}
+class "Sprite" as game.code.sprites.Sprite {
+  image
+  rect
+  type : str
+}
+game.code.sprites.AnimatedSprite --|> game.code.sprites.Sprite
+game.code.sprites.Coin --|> game.code.sprites.Sprite
+game.code.sprites.ExitDoor --|> game.code.sprites.Sprite
+game.code.sprites.Key --|> game.code.sprites.Sprite
+game.code.sprites.Player --|> game.code.sprites.AnimatedSprite
+@enduml
