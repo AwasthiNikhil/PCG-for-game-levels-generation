@@ -26,12 +26,7 @@ QUERY_PARAMS = {
     'ITERATIONS' : randint(1, 5)
 }
 
-# PLAYER = {
-#     'x': 500,
-#     'y': 900
-# } 
-
-# Base constants for average dimensions 
+# Constants
 BASE_WIDTH = 30
 BASE_HEIGHT = 30
 BASE_JUMP = 12

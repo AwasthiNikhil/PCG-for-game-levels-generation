@@ -24,11 +24,13 @@ class AnimatedSprite(Sprite):
         self.image = self.frames[int(self.frame_index) % len(self.frames)]
 
 class Player(AnimatedSprite):
-    def __init__(self, pos, groups, collision_sprites, exit_sprite, collectible_sprite, frames):
+    def __init__(self, pos, groups, collision_sprites, exit_sprite, collectible_sprite, frames, get_new_level):
 
         super().__init__(frames, pos, groups)
         self.type = 'object'
         self.flip = False
+        
+        self.get_new_level = get_new_level
         
         # movement and collision
         self.direction = pygame.Vector2()
@@ -39,7 +41,7 @@ class Player(AnimatedSprite):
         self.gravity = PLAYER_GRAVITY
         self.on_floor = False
         self.has_key = False
-        
+    
     def input(self):
         keys = pygame.key.get_pressed()
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
@@ -102,8 +104,9 @@ class Player(AnimatedSprite):
         if self.has_key:
             for sprite in self.exit_sprite:
                 if sprite.rect.colliderect(self.rect):
-                    print('Finish')
-                    # TODO: load new level
+                    print('Completed this level!')
+                    sprite.kill()
+                    self.get_new_level()
     
     def update(self, dt):   
         self.check_floor()

@@ -15,7 +15,7 @@ class Game():
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()        
         self.exit_sprite = pygame.sprite.Group()        
-        self.collectible_sprite = pygame.sprite.Group()       
+        self.collectible_sprite = pygame.sprite.Group()      
                 
         self.current_level_url = (
             f'http://127.0.0.1:5000/generate/{LEVEL_TYPE}?x={QUERY_PARAMS["WIDTH"]}'
@@ -30,18 +30,18 @@ class Game():
             f'&max_rooms={QUERY_PARAMS["MAX_ROOMS"]}'
             f'&iterations={QUERY_PARAMS["ITERATIONS"]}'
         )
-        
+
         # load game
         self.load_assets()
         self.setup()
         self.log()   
         
-        self.gui_logger = pygame.Surface((500,200), pygame.SRCALPHA)
+        # gui logger
+        self.gui_logger = pygame.Surface((500,275), pygame.SRCALPHA)
         self.gui_logger_rect = self.gui_logger.get_rect(topright=(SCREEN_WIDTH-10, 10))
         self.gui_font = pygame.font.Font(None, 24)
         
         self.log_gui()
-        
 
     def load_assets(self):
         self.player_frames = import_folder('images','player')
@@ -75,7 +75,7 @@ class Game():
         
         self.exit_door = ExitDoor(self.exit_position, (self.all_sprites, self.exit_sprite))
         self.exit_key = Key(self.item_position, (self.all_sprites, self.collectible_sprite))
-        self.player = Player(self.player_position, self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames)    
+        self.player = Player(self.player_position, self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames, self.get_new_level)    
     
     def log(self):
         print('Current Level Data:')
@@ -95,18 +95,20 @@ class Game():
             border_radius=10                  # ← this gives rounded corners
         )
         GUI_TEXT = (
-            f'Current Level URL: {self.current_level_url}',
+            f'URL: {self.current_level_url}',
+            f'Width: {QUERY_PARAMS["WIDTH"]}',
+            f'Height: {QUERY_PARAMS["HEIGHT"]}',
             f'Player Position: {self.player.rect.center}',
             f'Key Position: {self.item_position}',
             f'Exit Position: {self.exit_position}',
             f'Player Speed: {PLAYER_SPEED}',
             f'Player Jump: {JUMP}',
+            f'Key : {"Yes" if self.player.has_key else "No"}',
         )
         for i, text in enumerate(GUI_TEXT):
             text_surface = self.gui_font.render(text, True, (0, 0, 0))
             self.gui_logger.blit(text_surface, (10, 10 + i * 30))
-        
-    
+
     def get_player_spawnable_position(self):
         for y in range(len(self.level_data) - 1):  
             for x in range(len(self.level_data[y]) - 1): 
@@ -142,6 +144,34 @@ class Game():
             weights = [1] * len(potential_positions)
             return choices(potential_positions, weights=weights, k=1)[0]  # Select one position based on weights
         return None  # Return None if no spawnable position was found
+    
+    def reset_query_params(self):
+        return {    
+            'WIDTH' : randint(20, 40),
+            'HEIGHT' : randint(20, 40),
+            'SEED' : randint(0, 10000),
+            'SCALE' : random() * 4.0,
+            'MIN_LEAF_SIZE' : randint(1, 8),
+            'MAX_LEAF_SIZE' : randint(8, 15),
+            'WALL_PROBABILITY' : random(),
+            'THRESHOLD' : random() * 5,
+            'MIN_ROOM_SIZE' : randint(0, 3),
+            'MAX_ROOMS' : randint(3, 8),
+            'ITERATIONS' : randint(1, 5)
+        }
+    
+    def get_new_level(self):
+        self.all_sprites.empty()
+        self.collision_sprites.empty()
+        self.exit_sprite.empty()
+        self.collectible_sprite.empty()
+        
+        # Load new level
+        self.reset_query_params()
+        self.setup()
+        self.log()   
+        
+        self.gui_logger.fill((0, 0, 0, 0))
         
     def run(self):
         while self.running:
@@ -163,7 +193,6 @@ class Game():
             
             pygame.display.update()
             
-        
         pygame.quit()
 
 if __name__ == '__main__':
