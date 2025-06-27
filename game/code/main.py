@@ -15,17 +15,34 @@ class Game():
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()        
         self.exit_sprite = pygame.sprite.Group()        
-        self.collectible_sprite = pygame.sprite.Group()        
-                
+        self.collectible_sprite = pygame.sprite.Group()       
+         
+                        
+        self.current_level_url = (
+            f'http://127.0.0.1:5000/generate/{LEVEL_TYPE}?x={QUERY_PARAMS["WIDTH"]}'
+            f'&y={QUERY_PARAMS["HEIGHT"]}'
+            f'&seed={QUERY_PARAMS["SEED"]}'
+            f'&scale={QUERY_PARAMS["SCALE"]}'
+            f'&min_leaf_size={QUERY_PARAMS["MIN_LEAF_SIZE"]}'
+            f'&max_leaf_size={QUERY_PARAMS["MAX_LEAF_SIZE"]}'
+            f'&wall_probability={QUERY_PARAMS["WALL_PROBABILITY"]}'
+            f'&threshold={QUERY_PARAMS["THRESHOLD"]}'
+            f'&min_room_size={QUERY_PARAMS["MIN_ROOM_SIZE"]}'
+            f'&max_rooms={QUERY_PARAMS["MAX_ROOMS"]}'
+            f'&iterations={QUERY_PARAMS["ITERATIONS"]}'
+        )
+
         # load game
         self.load_assets()
         self.setup()
-        
+        self.log()   
+
     def load_assets(self):
         self.player_frames = import_folder('images','player')
-        
+    
     def setup(self):
-        self.level_loader = LevelLoader('../output')
+        # self.level_loader = LevelLoader('../output')
+        self.level_loader = LevelLoader(self.current_level_url)
         self.level_data = self.level_loader.get_grid()
         
         for y, row in enumerate(self.level_data):
@@ -49,9 +66,7 @@ class Game():
         self.exit_door = ExitDoor(self.get_exit_spawnable_position(), (self.all_sprites, self.exit_sprite))
         self.exit_key = Key(self.get_item_spawnable_position(), (self.all_sprites, self.collectible_sprite))
         self.player = Player(self.get_player_spawnable_position(), self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames)    
-
-        self.log()    
-        
+    
     def log(self):
         print(self.get_player_spawnable_position())
         print(self.get_item_spawnable_position())
@@ -102,7 +117,7 @@ class Game():
                     self.running = False
             
             # update
-            self.display_surface.fill('black')
+            self.display_surface.fill(BLOCKS[1]['color'])  
             self.all_sprites.update(dt) 
                 
             # draw

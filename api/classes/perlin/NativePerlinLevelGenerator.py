@@ -67,7 +67,7 @@ class NativePerlinLevelGenerator:
         if seed is not None:
             random.seed(seed)
         else:
-            seed = random.randint(0, 1000)
+            seed = random.randint(0, 10000)
             random.seed(seed)
             
         print(f'seed: {seed}')

@@ -1,7 +1,7 @@
 import pygame
 from os.path import join
 from os import walk
-from random import choice, random, choices
+from random import choice, random, choices, randint
 
 SCREEN_WIDTH = 1280
 SCREEN_HEIGHT = 720
@@ -9,17 +9,37 @@ SCREEN_HEIGHT = 720
 BLOCK_SIZE = 128
 PLAYER_SIZE = 32
 
+LEVEL_TYPE = 6
+
+QUERY_PARAMS = {    
+    'WIDTH' : randint(20, 40),
+    'HEIGHT' : randint(20, 40),
+    'SEED' : randint(0, 10000),
+    'SCALE' : random() * 4.0,
+    'MIN_LEAF_SIZE' : randint(1, 8),
+    'MAX_LEAF_SIZE' : randint(8, 15),
+    'WALL_PROBABILITY' : random(),
+    'THRESHOLD' : random() * 5,
+    'MIN_ROOM_SIZE' : randint(0, 3),
+    'MAX_ROOMS' : randint(3, 8),
+    'ITERATIONS' : randint(1, 5)
+}
+
 PLAYER = {
     'x': 500,
     'y': 900
-}
-JUMP = 50
+} 
+JUMP = 25
 PLAYER_SPEED = 400
-PLAYER_GRAVITY = 25
+PLAYER_GRAVITY = 9
+
+
 
 BLOCKS = {
-    1: {'color':'light green', 'name':'floor'},
-    2: {'color':'black', 'name':'wall'},
+    1: {'color':choice(['light green','antiquewhite', 'brown4', 'cadetblue3']), 'name':'floor'},
+    2: {'color':choice(['black', 'cornflowerblue', 'cornsilk2', 'darkolivegreen', 'gray28']), 'name':'wall'},
     3: {'color':'blue', 'name':'water'}
 }
+
+
 

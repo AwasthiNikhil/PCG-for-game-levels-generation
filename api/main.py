@@ -47,19 +47,23 @@ def generate_level(level_type):
     threshold = safe_int(request.args.get('threshold'), 4)
     min_room_size = safe_int(request.args.get('min_room_size'), 3)
     max_rooms = safe_int(request.args.get('max_rooms'), 15)
+    iterations = safe_int(request.args.get('iterations'), 1)
     
     grid = Grid(width, height)
 
     level_generator = None
 
     if level_type == 1:
-        level_generator = RandomLevelGenerator(grid)
+        level_generator = RandomLevelGenerator(grid=grid)
     elif level_type == 2:
-        level_generator = NativePerlinLevelGenerator(grid, scale=scale)
+        # level_generator = NativePerlinLevelGenerator(grid=grid, scale=scale, threshold=threshold, min_room_size=min_room_size)
+        level_generator = NativePerlinLevelGenerator(grid=grid)
     elif level_type == 3:
-        level_generator = SimplexLevelGenerator(grid)
+        # level_generator = SimplexLevelGenerator(grid=grid, threshold=threshold, scale=scale)
+        level_generator = SimplexLevelGenerator(grid=grid)
     elif level_type == 4:
-        level_generator = CellularAutomataLevelGenerator(grid)
+        # level_generator = CellularAutomataLevelGenerator(grid=grid, wall_probability=wall_probability, iterations=iterations)
+        level_generator = CellularAutomataLevelGenerator(grid=grid,  iterations=iterations)
     elif level_type == 5:
         level_generator = BSPLevelGenerator(grid, min_leaf_size=min_leaf_size, max_leaf_size=max_leaf_size)
     elif level_type == 6:
@@ -70,19 +74,21 @@ def generate_level(level_type):
         sys.stdout = old_stdout
         return Response(mystdout.getvalue(), mimetype='text/plain')
 
-    level_generator.generate(seed=seed)
+    level_generator.generate(seed= seed if seed else None)
 
     if level_type == 1:
         post_processor = LevelPostProcessor(grid)
         post_processor.remove_isolated_walls()
 
     print(">>>")  # End delimiter
+    
     grid.display()
 
     # Reset stdout and return output
     sys.stdout = old_stdout
+    print(f"Seed {seed} ")
+    
     return Response(mystdout.getvalue(), mimetype='text/plain')
-
 
 if __name__ == '__main__':
     app.run(debug=True)
