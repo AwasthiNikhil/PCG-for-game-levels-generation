@@ -16,8 +16,7 @@ class Game():
         self.collision_sprites = pygame.sprite.Group()        
         self.exit_sprite = pygame.sprite.Group()        
         self.collectible_sprite = pygame.sprite.Group()       
-         
-                        
+                
         self.current_level_url = (
             f'http://127.0.0.1:5000/generate/{LEVEL_TYPE}?x={QUERY_PARAMS["WIDTH"]}'
             f'&y={QUERY_PARAMS["HEIGHT"]}'
@@ -68,8 +67,14 @@ class Game():
         self.player = Player(self.get_player_spawnable_position(), self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames)    
     
     def log(self):
-        print(self.get_player_spawnable_position())
-        print(self.get_item_spawnable_position())
+        print('Current Level Data:')
+        for param in QUERY_PARAMS:
+            print(f'{param}: {QUERY_PARAMS[param]}')
+    
+        print('---------------------------------------')
+        print('Player: ', self.get_player_spawnable_position())
+        print('Key', self.get_item_spawnable_position())
+        print('Exit', self.get_exit_spawnable_position())
     
     def get_player_spawnable_position(self):
         for y in range(len(self.level_data) - 1):  
@@ -106,7 +111,6 @@ class Game():
             weights = [1] * len(potential_positions)
             return choices(potential_positions, weights=weights, k=1)[0]  # Select one position based on weights
         return None  # Return None if no spawnable position was found
-
         
     def run(self):
         while self.running:

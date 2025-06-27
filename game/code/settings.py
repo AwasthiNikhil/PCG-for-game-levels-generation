@@ -25,21 +25,32 @@ QUERY_PARAMS = {
     'ITERATIONS' : randint(1, 5)
 }
 
-PLAYER = {
-    'x': 500,
-    'y': 900
-} 
-JUMP = 25
-PLAYER_SPEED = 400
+# PLAYER = {
+#     'x': 500,
+#     'y': 900
+# } 
+
+# Base constants for average dimensions 
+BASE_WIDTH = 30
+BASE_HEIGHT = 30
+BASE_JUMP = 10
+BASE_PLAYER_SPEED = 500
 PLAYER_GRAVITY = 9
 
+# Scaling factors (tune for balance)
+JUMP = BASE_JUMP * (QUERY_PARAMS["HEIGHT"] / BASE_HEIGHT)
+PLAYER_SPEED = BASE_PLAYER_SPEED * (QUERY_PARAMS["WIDTH"] / BASE_WIDTH)
 
+JUMP = round(JUMP)
+PLAYER_SPEED = round(PLAYER_SPEED)
+print("---------------")
+print("Jump Height:", JUMP)
+print("Player Speed:", PLAYER_SPEED)
 
 BLOCKS = {
     1: {'color':choice(['light green','antiquewhite', 'brown4', 'cadetblue3']), 'name':'floor'},
     2: {'color':choice(['black', 'cornflowerblue', 'cornsilk2', 'darkolivegreen', 'gray28']), 'name':'wall'},
     3: {'color':'blue', 'name':'water'}
 }
-
 
 
