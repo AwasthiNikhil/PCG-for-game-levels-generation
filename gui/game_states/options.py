@@ -2,6 +2,7 @@ import pygame
 from core.base_scene import BaseScene
 from utils.button import Button
 from settings import WHITE, BLACK, GRAY
+from settings import WIDTH, HEIGHT
 
 class Slider:
     def __init__(self, label, key, game, min_val, max_val, step, pos, font):
@@ -108,27 +109,27 @@ class OptionsScene(BaseScene):
         self.active_tab = "Video"
 
         self.tabs = [
-            Button("Video", (150, 100), (100, 40), lambda: self.set_tab("Video"), self.font),
-            Button("Sound", (270, 100), (100, 40), lambda: self.set_tab("Sound"), self.font),
-            Button("Controls", (390, 100), (120, 40), lambda: self.set_tab("Controls"), self.font)
+            Button("Video", (430, 100), (100, 40), lambda: self.set_tab("Video"), self.font),
+            Button("Sound", (550, 100), (100, 40), lambda: self.set_tab("Sound"), self.font),
+            Button("Controls", (670, 100), (120, 40), lambda: self.set_tab("Controls"), self.font)
         ]
 
         # Video tab sliders & toggles
         self.video_sliders = [
-            Slider("WIDTH", 'WIDTH', game, 10, 40, 1, (300, 180), self.font),
-            Slider("HEIGHT", 'HEIGHT', game, 10, 40, 1, (300, 240), self.font),
-            Slider("SCALE", 'SCALE', game, 0.5, 4.0, 0.1, (300, 300), self.font)
+            Slider("WIDTH", 'WIDTH', game, 10, 40, 1, (WIDTH/2 - 100, 180), self.font),
+            Slider("HEIGHT", 'HEIGHT', game, 10, 40, 1, (WIDTH/2 - 100, 240), self.font),
+            Slider("SCALE", 'SCALE', game, 0.5, 4.0, 0.1, (WIDTH/2 - 100, 300), self.font)
         ]
         self.video_toggles = [
-            Toggle("Fullscreen", 'FULLSCREEN', game, (300, 360), self.font),
-            Toggle("V-Sync", 'VSYNC', game, (300, 410), self.font)
+            Toggle("Fullscreen", 'FULLSCREEN', game, (WIDTH/2 - 100, 360), self.font),
+            Toggle("V-Sync", 'VSYNC', game, (WIDTH/2 - 100, 410), self.font)
         ]
 
         # Sound tab sliders
         self.sound_sliders = [
-            Slider("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (300, 180), self.font),
-            Slider("Music Volume", 'MUSIC_VOL', game, 0.0, 1.0, 0.01, (300, 240), self.font),
-            Slider("SFX Volume", 'SFX_VOL', game, 0.0, 1.0, 0.01, (300, 300), self.font)
+            Slider("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH/2 - 100, 180), self.font),
+            Slider("Music Volume", 'MUSIC_VOL', game, 0.0, 1.0, 0.01, (WIDTH/2 - 100, 240), self.font),
+            Slider("SFX Volume", 'SFX_VOL', game, 0.0, 1.0, 0.01, (WIDTH/2 - 100, 300), self.font)
         ]
                 # Controls bindings
         if 'CONTROLS' not in self.game.settings:
@@ -140,13 +141,13 @@ class OptionsScene(BaseScene):
             }
 
         self.control_bindings = [
-            ControlBinding("Move Left", 'MOVE_LEFT', game, (300, 180), self.font),
-            ControlBinding("Move Right", 'MOVE_RIGHT', game, (300, 230), self.font),
-            ControlBinding("Jump", 'JUMP', game, (300, 280), self.font),
-            ControlBinding("Shoot", 'SHOOT', game, (300, 330), self.font),
+            ControlBinding("Move Left", 'MOVE_LEFT', game, (WIDTH/2 - 150, 180), self.font),
+            ControlBinding("Move Right", 'MOVE_RIGHT', game, (WIDTH/2 - 150, 230), self.font),
+            ControlBinding("Jump", 'JUMP', game, (WIDTH/2 - 150, 280), self.font),
+            ControlBinding("Shoot", 'SHOOT', game, (WIDTH/2 - 150, 330), self.font),
         ]
 
-        self.back_button = Button("Back", (300, 480), (200, 50), self.go_back, self.font)
+        self.back_button = Button("Back", (WIDTH/2 - 100, 480), (150, 50), self.go_back, self.font)
 
     def set_tab(self, tab_name):
         self.active_tab = tab_name

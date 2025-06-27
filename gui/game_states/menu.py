@@ -17,9 +17,9 @@ class MenuScene(BaseScene):
         self.create_buttons()
 
     def create_buttons(self):
-        start_btn = Button("Start Game", (300, 250), (200, 50), self.start_game)
-        options_btn = Button("Options", (300, 320), (200, 50), self.open_options)
-        quit_btn = Button("Quit", (300, 390), (200, 50), self.quit_game)
+        start_btn = Button("Start Game", (WIDTH/2 - 100, 250), (200, 50), self.start_game)
+        options_btn = Button("Options", (WIDTH/2 - 100, 320), (200, 50), self.open_options)
+        quit_btn = Button("Quit", (WIDTH/2 - 100, 390), (200, 50), self.quit_game)
 
         self.buttons.extend([start_btn,  options_btn, quit_btn])
 
