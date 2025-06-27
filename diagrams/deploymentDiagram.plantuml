@@ -1,0 +1,19 @@
+@startuml deploymentDiagram
+node "Player's Machine" {
+  artifact "LuckyYou.exe / main.py"
+  node "Python Runtime" {
+    artifact "Pygame CE"
+    artifact "Game Assets"
+  }
+
+  node "Local Flask API Server" {
+    artifact "Flask App"
+    artifact "Procedural Generator Modules"
+  }
+}
+
+"main.py" --> "Pygame CE"
+"main.py" --> "Game Assets"
+"main.py" --> "Flask App" : HTTP Request (Level Data)
+"Flask App" --> "Procedural Generator Modules"
+@enduml
