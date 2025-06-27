@@ -1,0 +1,11 @@
+@startuml classes_Graph
+set namespaceSeparator none
+class "GraphLevelGenerator" as GraphLevelGenerator.GraphLevelGenerator {
+  grid
+  max_rooms : int
+  room_max_size : int
+  room_min_size : int
+  rooms : list
+  generate(seed)
+}
+@enduml

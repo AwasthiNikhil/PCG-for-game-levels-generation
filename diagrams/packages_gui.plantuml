@@ -1,0 +1,34 @@
+@startuml packages_gui
+set namespaceSeparator none
+package "gui" as gui {
+}
+package "gui.core" as gui.core {
+}
+package "gui.core.base_scene" as gui.core.base_scene {
+}
+package "gui.core.scene_manager" as gui.core.scene_manager {
+}
+package "gui.game_states" as gui.game_states {
+}
+package "gui.game_states.gameplay" as gui.game_states.gameplay {
+}
+package "gui.game_states.menu" as gui.game_states.menu {
+}
+package "gui.game_states.options" as gui.game_states.options {
+}
+package "gui.game_states.pause" as gui.game_states.pause {
+}
+package "gui.main" as gui.main {
+}
+package "gui.settings" as gui.settings {
+}
+package "gui.utils" as gui.utils {
+}
+package "gui.utils.button" as gui.utils.button {
+}
+package "gui.utils.heplers" as gui.utils.heplers {
+}
+gui.main --> gui.core.scene_manager
+gui.main --> gui.game_states.menu
+gui.main --> gui.settings
+@enduml

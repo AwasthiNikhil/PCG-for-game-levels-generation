@@ -1,0 +1,26 @@
+@startuml classes_BSP
+set namespaceSeparator none
+class "BSPNode" as api.classes.bsp.BSPNodeRoom.BSPNode {
+  h
+  left : NoneType
+  right : NoneType
+  room : NoneType
+  w
+  x
+  y
+  create_room()
+  split(min_size, max_size)
+}
+class "Room" as api.classes.bsp.BSPNodeRoom.Room {
+  h
+  w
+  x
+  y
+  center()
+}
+api.classes.bsp.BSPNodeRoom.BSPNode --* api.classes.bsp.BSPNodeRoom.BSPNode : left
+api.classes.bsp.BSPNodeRoom.BSPNode --* api.classes.bsp.BSPNodeRoom.BSPNode : left
+api.classes.bsp.BSPNodeRoom.BSPNode --* api.classes.bsp.BSPNodeRoom.BSPNode : right
+api.classes.bsp.BSPNodeRoom.BSPNode --* api.classes.bsp.BSPNodeRoom.BSPNode : right
+api.classes.bsp.BSPNodeRoom.Room --* api.classes.bsp.BSPNodeRoom.BSPNode : room
+@enduml

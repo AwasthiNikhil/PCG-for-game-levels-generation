@@ -1,0 +1,8 @@
+@startuml classes_random
+set namespaceSeparator none
+class "RandomLevelGenerator" as RandomLevelGenerator.RandomLevelGenerator {
+  grid
+  wall_prob : float
+  generate(seed)
+}
+@enduml

@@ -1,0 +1,17 @@
+@startuml packages_api_classes
+set namespaceSeparator none
+package "api.classes" as api.classes {
+}
+package "api.classes.Grid" as api.classes.Grid {
+}
+package "api.classes.LevelPostProcessor" as api.classes.LevelPostProcessor {
+}
+package "api.classes.bsp" as api.classes.bsp {
+}
+package "api.classes.bsp.BSPLevelGenerator" as api.classes.bsp.BSPLevelGenerator {
+}
+package "api.classes.bsp.BSPNodeRoom" as api.classes.bsp.BSPNodeRoom {
+}
+package "api.classes.settings" as api.classes.settings {
+}
+@enduml

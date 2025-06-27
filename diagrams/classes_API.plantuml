@@ -1,0 +1,45 @@
+@startuml classes_API
+set namespaceSeparator none
+class "BSPLevelGenerator" as api.classes.bsp.BSPLevelGenerator.BSPLevelGenerator {
+  floor_char : str
+  grid
+  max_leaf_size : int
+  min_leaf_size : int
+  rooms : list
+  wall_char : str
+  generate(seed)
+}
+class "BSPNode" as api.classes.bsp.BSPNodeRoom.BSPNode {
+  h
+  left : NoneType
+  right : NoneType
+  room : NoneType
+  w
+  x
+  y
+  create_room()
+  split(min_size, max_size)
+}
+class "Grid" as api.classes.Grid.Grid {
+  grid
+  height : int
+  width : int
+  display(return_as_string)
+}
+class "LevelPostProcessor" as api.classes.LevelPostProcessor.LevelPostProcessor {
+  grid
+  remove_isolated_walls()
+}
+class "Room" as api.classes.bsp.BSPNodeRoom.Room {
+  h
+  w
+  x
+  y
+  center()
+}
+api.classes.bsp.BSPNodeRoom.BSPNode --* api.classes.bsp.BSPNodeRoom.BSPNode : left
+api.classes.bsp.BSPNodeRoom.BSPNode --* api.classes.bsp.BSPNodeRoom.BSPNode : left
+api.classes.bsp.BSPNodeRoom.BSPNode --* api.classes.bsp.BSPNodeRoom.BSPNode : right
+api.classes.bsp.BSPNodeRoom.BSPNode --* api.classes.bsp.BSPNodeRoom.BSPNode : right
+api.classes.bsp.BSPNodeRoom.Room --* api.classes.bsp.BSPNodeRoom.BSPNode : room
+@enduml

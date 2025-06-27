@@ -1,0 +1,17 @@
+@startuml classes_perlin
+set namespaceSeparator none
+class "NativePerlinLevelGenerator" as NativePerlinLevelGenerator.NativePerlinLevelGenerator {
+  grid
+  min_room_size : int
+  scale : float
+  threshold : float
+  break_enclosures()
+  find_and_break_wall(room)
+  flood_fill(y, x, visited)
+  generate(seed)
+  is_enclosed(room)
+  is_solid_diagonal(y, x)
+  is_solid_one_way_blocker(y, x)
+  remove_diagonal_blockers()
+}
+@enduml

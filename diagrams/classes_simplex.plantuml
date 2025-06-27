@@ -1,0 +1,11 @@
+@startuml classes_simplex
+set namespaceSeparator none
+class "SimplexLevelGenerator" as SimplexLevelGenerator.SimplexLevelGenerator {
+  floor_char : str
+  grid
+  scale : float
+  threshold : float
+  wall_char : str
+  generate(seed)
+}
+@enduml

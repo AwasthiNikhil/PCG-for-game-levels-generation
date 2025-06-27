@@ -9,7 +9,7 @@ SCREEN_HEIGHT = 720
 BLOCK_SIZE = 128
 PLAYER_SIZE = 32
 
-LEVEL_TYPE = 1
+LEVEL_TYPE = 6
 # LEVEL_TYPE = 3
 
 QUERY_PARAMS = {    
@@ -20,8 +20,10 @@ QUERY_PARAMS = {
     
     'SEED' : randint(0, 10000),
     'SCALE' : random() * 4.0,
-    'MIN_LEAF_SIZE' : randint(1, 8),
-    'MAX_LEAF_SIZE' : randint(8, 15),
+    # 'MIN_LEAF_SIZE' : randint(1, 8),
+    # 'MAX_LEAF_SIZE' : randint(8, 15),
+    'MIN_LEAF_SIZE' : 5,
+    'MAX_LEAF_SIZE' : 12,
     'WALL_PROBABILITY' : random(),
     'THRESHOLD' : random() * 5,
     'MIN_ROOM_SIZE' : randint(0, 3),

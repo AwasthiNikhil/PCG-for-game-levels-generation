@@ -1,0 +1,22 @@
+@startuml packages_full_game
+set namespaceSeparator none
+package "game" as game {
+}
+package "game.code" as game.code {
+}
+package "game.code.groups" as game.code.groups {
+}
+package "game.code.levelloader" as game.code.levelloader {
+}
+package "game.code.main" as game.code.main {
+}
+package "game.code.settings" as game.code.settings {
+}
+package "game.code.sprites" as game.code.sprites {
+}
+package "game.code.support" as game.code.support {
+}
+package "game.code.timer" as game.code.timer {
+}
+game.code.main --> game.code.timer
+@enduml

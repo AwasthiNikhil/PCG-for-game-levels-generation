@@ -1,0 +1,51 @@
+@startuml
+object Game {
+  state = "Playing"
+  remaining_time = 45
+  player : Player
+  level_loader : LevelLoader
+}
+
+object Player {
+  x = 120
+  y = 250
+  has_key = false
+  on_floor = true
+}
+
+object LevelLoader {
+  grid : list[list[int]]
+  level : "bsp"
+}
+
+object Timer {
+  active = true
+  remaining_time = 45
+}
+
+object AllSprites {
+  draw(target_position)
+}
+
+object CollisionSprite {
+  rect
+  image
+}
+
+object Key {
+  type = "collectible"
+}
+
+object ExitDoor {
+  type = "exit"
+}
+
+Game --> Player
+Game --> LevelLoader
+Game --> Timer
+Game --> AllSprites
+Game --> CollisionSprite
+Player --> Key
+Player --> ExitDoor
+
+@enduml
