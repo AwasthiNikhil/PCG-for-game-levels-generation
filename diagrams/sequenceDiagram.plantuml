@@ -1,0 +1,30 @@
+@startuml sequenceDiagram
+actor Player
+participant Game
+participant APIHandler
+participant LevelLoader
+participant PlayerObject as Player
+participant Timer
+
+Player -> Game : startGame()
+Game -> APIHandler : getLevel()
+APIHandler --> Game : level_data
+Game -> LevelLoader : parse(level_data)
+LevelLoader --> Game : grid, entities
+Game -> Player : spawn(position)
+Game -> Timer : start(duration)
+
+loop gameplay
+    Player -> Player : input()
+    Player -> Game : checkCollision()
+    Player -> Game : checkCollectible()
+    Player -> Game : checkExit()
+end
+
+Game -> Timer : checkTime()
+alt exit reached
+    Game -> Game : loadNextLevel()
+else time up
+    Game -> Game : showGameOverScreen()
+end
+@enduml

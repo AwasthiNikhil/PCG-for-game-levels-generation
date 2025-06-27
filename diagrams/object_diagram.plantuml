@@ -1,4 +1,4 @@
-@startuml
+@startuml object_diagram
 object Game {
   state = "Playing"
   remaining_time = 45

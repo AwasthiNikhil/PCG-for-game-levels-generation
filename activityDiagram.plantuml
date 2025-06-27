@@ -1,0 +1,62 @@
+@startuml activityDiagram
+start
+
+:Launch Game;
+:Show Main Menu;
+
+partition Menu {
+    :Display options (Play, Settings, Exit);
+
+    if (User selects Play?) then (yes)
+        :Fetch level from API;
+        :Parse level data;
+        :Spawn player;
+    elseif (User selects Settings?) then (yes)
+        :Show Settings Menu;
+        :Adjust preferences;
+        --> Menu
+    else
+        :Exit Game;
+        stop
+    endif
+}
+
+partition Gameplay {
+    :Start Timer;
+
+    while (Game Running?) is (true)
+        :Capture Player Input;
+        :Update Player Movement;
+        :Check Collisions;
+
+        if (Key Collected?) then (yes)
+            :Set has_key = true;
+        endif
+
+        if (Reached Exit?) then (yes)
+            if (Has Key?) then (yes)
+                :Level Complete;
+                break
+            endif
+        endif
+
+        if (Timer Expired?) then (yes)
+            :Game Over;
+            break
+        endif
+    endwhile
+}
+
+partition PostGame {
+    if (Level Complete?) then (yes)
+        :Load Next Level;
+        --> Gameplay
+    else
+        :Show Game Over Screen;
+        :Return to Main Menu;
+        --> Menu
+    endif
+}
+
+stop
+@enduml
