@@ -9,12 +9,15 @@ SCREEN_HEIGHT = 720
 BLOCK_SIZE = 128
 PLAYER_SIZE = 32
 
-# LEVEL_TYPE = 6
 LEVEL_TYPE = 6
+# LEVEL_TYPE = 3
 
 QUERY_PARAMS = {    
-    'WIDTH' : randint(20, 40),
-    'HEIGHT' : randint(20, 40),
+    # 'WIDTH' : randint(20, 40),
+    # 'HEIGHT' : randint(20, 40),
+    'WIDTH' : 25,
+    'HEIGHT' : 25,
+    
     'SEED' : randint(0, 10000),
     'SCALE' : random() * 4.0,
     'MIN_LEAF_SIZE' : randint(1, 8),
@@ -48,5 +51,3 @@ BLOCKS = {
     2: {'color':choice(['black', 'cornflowerblue', 'cornsilk2', 'darkolivegreen', 'gray28']), 'name':'wall'},
     3: {'color':'blue', 'name':'water'}
 }
-
-

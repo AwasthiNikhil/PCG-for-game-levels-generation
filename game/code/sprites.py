@@ -128,3 +128,8 @@ class Key(Sprite):
         
         self.type = 'exit'
     
+class Coin(Sprite):
+    def __init__(self, pos, groups, image):
+        super().__init__(pos, image, groups)
+                
+        self.type = 'collectible'
