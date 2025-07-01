@@ -16,7 +16,6 @@ class OptionsScene(BaseScene):
         # Tab button configuration (Label -> Callback function)
         self.tabs_config = {
             "Player": lambda: self.set_tab("Player"),
-            "Video": lambda: self.set_tab("Video"),
             "Sound": lambda: self.set_tab("Sound"),
             "Controls": lambda: self.set_tab("Controls")
         }
@@ -25,27 +24,7 @@ class OptionsScene(BaseScene):
         self.tabs = [Button(name, (430 + i * 120, 100), (100, 40), callback, self.font)
                      for i, (name, callback) in enumerate(self.tabs_config.items())]
 
-        # Video tab sliders & toggles configuration
-        self.video_sliders_config = [
-            ("WIDTH", 'WIDTH', game, 10, 40, 1, (WIDTH / 2 - 100, 180)),
-            ("HEIGHT", 'HEIGHT', game, 10, 40, 1, (WIDTH / 2 - 100, 240)),
-            ("SCALE", 'SCALE', game, 0.5, 4.0, 0.1, (WIDTH / 2 - 100, 300))
-        ]
-        self.video_toggles_config = [
-            ("Fullscreen", 'FULLSCREEN', game, (WIDTH / 2 - 100, 360)),
-            ("V-Sync", 'VSYNC', game, (WIDTH / 2 - 100, 410))
-        ]
-
-        # Dynamically create sliders and toggles for video settings
-        self.video_sliders = [
-            Slider(label, setting_key, game, min_val, max_val, step, pos, self.font)
-            for label, setting_key, game, min_val, max_val, step, pos in self.video_sliders_config
-        ]
-        self.video_toggles = [
-            Toggle(label, setting_key, game, pos, self.font)
-            for label, setting_key, game, pos in self.video_toggles_config
-        ]
-
+        
         # Sound tab sliders configuration
         self.sound_sliders_config = [
             ("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 180)),
@@ -101,11 +80,6 @@ class OptionsScene(BaseScene):
             if self.active_tab == 'Player':
                 # TODO: Handle player-specific options here if needed
                 pass
-            elif self.active_tab == "Video":
-                for slider in self.video_sliders:
-                    slider.handle_event(event)
-                for toggle in self.video_toggles:
-                    toggle.handle_event(event)
             elif self.active_tab == "Sound":
                 for slider in self.sound_sliders:
                     slider.handle_event(event)
@@ -128,11 +102,6 @@ class OptionsScene(BaseScene):
         # Draw the active tab's content
         if self.active_tab == "Player":
             pass
-        elif self.active_tab == "Video":
-            for slider in self.video_sliders:
-                slider.draw(screen)
-            for toggle in self.video_toggles:
-                toggle.draw(screen)
         elif self.active_tab == "Sound":
             for slider in self.sound_sliders:
                 slider.draw(screen)
