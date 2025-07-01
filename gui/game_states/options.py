@@ -1,117 +1,23 @@
 import pygame
 from core.base_scene import BaseScene
 from utils.button import Button
-from settings import WHITE, BLACK, GRAY
+from settings import WHITE
 from settings import WIDTH, HEIGHT
-
-class Slider:
-    def __init__(self, label, key, game, min_val, max_val, step, pos, font):
-        self.label = label
-        self.key = key
-        self.game = game
-        self.min = min_val
-        self.max = max_val
-        self.step = step
-        self.pos = pos
-        self.width = 200
-        self.height = 10
-        self.font = font
-        self.slider_rect = pygame.Rect(pos[0], pos[1], self.width, self.height)
-
-    def get_value(self):
-        return self.game.settings[self.key]
-
-    def draw(self, screen):
-        val = self.get_value()
-        percent = (val - self.min) / (self.max - self.min)
-        handle_x = self.slider_rect.x + percent * self.slider_rect.width
-
-        pygame.draw.rect(screen, GRAY, self.slider_rect)
-        pygame.draw.circle(screen, BLACK, (int(handle_x), self.slider_rect.centery), 8)
-
-        label_surf = self.font.render(f"{self.label}: {val:.2f}", True, BLACK)
-        screen.blit(label_surf, (self.slider_rect.x, self.slider_rect.y - 25))
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and self.slider_rect.collidepoint(event.pos):
-            self._set_value_from_pos(event.pos[0])
-        elif event.type == pygame.MOUSEMOTION and event.buttons[0]:
-            if self.slider_rect.collidepoint(event.pos):
-                self._set_value_from_pos(event.pos[0])
-
-    def _set_value_from_pos(self, x_pos):
-        rel_x = x_pos - self.slider_rect.x
-        percent = max(0, min(1, rel_x / self.slider_rect.width))
-        value = self.min + percent * (self.max - self.min)
-        stepped_value = round(value / self.step) * self.step
-        self.game.settings[self.key] = max(self.min, min(self.max, stepped_value))
-
-class Toggle:
-    def __init__(self, label, key, game, pos, font):
-        self.label = label
-        self.key = key
-        self.game = game
-        self.rect = pygame.Rect(pos[0], pos[1], 120, 30)
-        self.font = font
-
-    def draw(self, screen):
-        val = self.game.settings.get(self.key, False)
-        text = f"{self.label}: {'ON' if val else 'OFF'}"
-        text_surf = self.font.render(text, True, BLACK)
-        pygame.draw.rect(screen, GRAY if val else WHITE, self.rect)
-        pygame.draw.rect(screen, BLACK, self.rect, 2)
-        screen.blit(text_surf, self.rect.move(10, 5))
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN and self.rect.collidepoint(event.pos):
-            current = self.game.settings.get(self.key, False)
-            self.game.settings[self.key] = not current
-
-class ControlBinding:
-    def __init__(self, label, action, game, pos, font):
-        self.label = label
-        self.action = action
-        self.game = game
-        self.pos = pos
-        self.font = font
-        self.rect = pygame.Rect(pos[0], pos[1], 300, 40)
-        self.listening = False
-
-    def draw(self, screen):
-        # Draw background and border
-        color = (180, 180, 255) if self.listening else WHITE
-        pygame.draw.rect(screen, color, self.rect)
-        pygame.draw.rect(screen, BLACK, self.rect, 2)
-
-        # Draw action label
-        label_surf = self.font.render(self.label, True, BLACK)
-        screen.blit(label_surf, (self.rect.x + 10, self.rect.y + 8))
-
-        # Draw current key name
-        key_val = self.game.settings['CONTROLS'].get(self.action, None)
-        key_name = pygame.key.name(key_val) if key_val else "Unbound"
-        key_surf = self.font.render(key_name, True, BLACK)
-        screen.blit(key_surf, (self.rect.right - key_surf.get_width() - 10, self.rect.y + 8))
-
-    def handle_event(self, event):
-        if event.type == pygame.MOUSEBUTTONDOWN:
-            if self.rect.collidepoint(event.pos):
-                self.listening = True
-        elif event.type == pygame.KEYDOWN and self.listening:
-            # Update key binding
-            self.game.settings['CONTROLS'][self.action] = event.key
-            self.listening = False
+from utils.slider import Slider
+from utils.toggle import Toggle
+from utils.controlbinding import ControlBinding
 
 class OptionsScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
         self.font = pygame.font.SysFont("Arial", 24)
-        self.active_tab = "Video"
+        self.active_tab = "Player"
 
         self.tabs = [
-            Button("Video", (430, 100), (100, 40), lambda: self.set_tab("Video"), self.font),
-            Button("Sound", (550, 100), (100, 40), lambda: self.set_tab("Sound"), self.font),
-            Button("Controls", (670, 100), (120, 40), lambda: self.set_tab("Controls"), self.font)
+            Button("Player", (430, 100), (100, 40), lambda: self.set_tab("Player"), self.font),
+            Button("Video", (550, 100), (100, 40), lambda: self.set_tab("Video"), self.font),
+            Button("Sound", (670, 100), (120, 40), lambda: self.set_tab("Sound"), self.font),
+            Button("Controls", (800, 100), (120, 40), lambda: self.set_tab("Controls"), self.font)
         ]
 
         # Video tab sliders & toggles
@@ -161,7 +67,10 @@ class OptionsScene(BaseScene):
             for tab in self.tabs:
                 tab.handle_event(event)
 
-            if self.active_tab == "Video":
+            if self.active_tab == 'Player':
+                # TODO: Handle player-specific options here if needed
+                pass
+            elif self.active_tab == "Video":
                 for slider in self.video_sliders:
                     slider.handle_event(event)
                 for toggle in self.video_toggles:
@@ -185,7 +94,9 @@ class OptionsScene(BaseScene):
         for tab in self.tabs:
             tab.draw(screen)
 
-        if self.active_tab == "Video":
+        if self.active_tab == "Player":
+            pass
+        elif self.active_tab == "Video":
             for slider in self.video_sliders:
                 slider.draw(screen)
             for toggle in self.video_toggles:
