@@ -11,6 +11,7 @@ class Game:
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
+        self.paused = False
         self.settings = {
             'WIDTH': 25,
             'HEIGHT': 25,
@@ -30,7 +31,7 @@ class Game:
             for event in events:
                 if event.type == pygame.QUIT:
                     running = False
-
+                        
             self.scene_manager.scene.handle_events(events)
             self.scene_manager.scene.update()
             self.scene_manager.scene.draw(self.screen)
