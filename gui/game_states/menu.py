@@ -4,7 +4,7 @@ import pygame
 from core.base_scene import BaseScene
 from utils.button import Button
 from settings import WIDTH, HEIGHT, BLUE
-from game_states import gameplay
+from game_states.gameplay import GameplayScene
 from game_states.options import OptionsScene
 
 class MenuScene(BaseScene):
@@ -24,7 +24,7 @@ class MenuScene(BaseScene):
         self.buttons.extend([start_btn,  options_btn, quit_btn])
 
     def start_game(self):
-        self.game.scene_manager.go_to(gameplay.GameplayScene(self.game))
+        self.game.scene_manager.go_to(GameplayScene(self.game))
 
     def open_options(self):
         self.game.scene_manager.go_to(OptionsScene(self.game))
