@@ -131,7 +131,7 @@ class OptionsScene(BaseScene):
             Slider("Music Volume", 'MUSIC_VOL', game, 0.0, 1.0, 0.01, (WIDTH/2 - 100, 240), self.font),
             Slider("SFX Volume", 'SFX_VOL', game, 0.0, 1.0, 0.01, (WIDTH/2 - 100, 300), self.font)
         ]
-                # Controls bindings
+        # Controls bindings
         if 'CONTROLS' not in self.game.settings:
             self.game.settings['CONTROLS'] = {
                 'MOVE_LEFT': pygame.K_LEFT,

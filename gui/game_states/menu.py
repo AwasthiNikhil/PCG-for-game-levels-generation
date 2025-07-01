@@ -33,7 +33,6 @@ class MenuScene(BaseScene):
         pygame.quit()
         exit()
 
-
     def handle_events(self, events):
         for event in events:
             for btn in self.buttons:
