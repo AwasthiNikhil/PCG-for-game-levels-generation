@@ -13,31 +13,53 @@ class OptionsScene(BaseScene):
         self.font = pygame.font.SysFont("Arial", 24)
         self.active_tab = "Player"
 
-        self.tabs = [
-            Button("Player", (430, 100), (100, 40), lambda: self.set_tab("Player"), self.font),
-            Button("Video", (550, 100), (100, 40), lambda: self.set_tab("Video"), self.font),
-            Button("Sound", (670, 100), (120, 40), lambda: self.set_tab("Sound"), self.font),
-            Button("Controls", (800, 100), (120, 40), lambda: self.set_tab("Controls"), self.font)
+        # Tab button configuration (Label -> Callback function)
+        self.tabs_config = {
+            "Player": lambda: self.set_tab("Player"),
+            "Video": lambda: self.set_tab("Video"),
+            "Sound": lambda: self.set_tab("Sound"),
+            "Controls": lambda: self.set_tab("Controls")
+        }
+
+        # Dynamically create tab buttons
+        self.tabs = [Button(name, (430 + i * 120, 100), (100, 40), callback, self.font)
+                     for i, (name, callback) in enumerate(self.tabs_config.items())]
+
+        # Video tab sliders & toggles configuration
+        self.video_sliders_config = [
+            ("WIDTH", 'WIDTH', game, 10, 40, 1, (WIDTH / 2 - 100, 180)),
+            ("HEIGHT", 'HEIGHT', game, 10, 40, 1, (WIDTH / 2 - 100, 240)),
+            ("SCALE", 'SCALE', game, 0.5, 4.0, 0.1, (WIDTH / 2 - 100, 300))
+        ]
+        self.video_toggles_config = [
+            ("Fullscreen", 'FULLSCREEN', game, (WIDTH / 2 - 100, 360)),
+            ("V-Sync", 'VSYNC', game, (WIDTH / 2 - 100, 410))
         ]
 
-        # Video tab sliders & toggles
+        # Dynamically create sliders and toggles for video settings
         self.video_sliders = [
-            Slider("WIDTH", 'WIDTH', game, 10, 40, 1, (WIDTH/2 - 100, 180), self.font),
-            Slider("HEIGHT", 'HEIGHT', game, 10, 40, 1, (WIDTH/2 - 100, 240), self.font),
-            Slider("SCALE", 'SCALE', game, 0.5, 4.0, 0.1, (WIDTH/2 - 100, 300), self.font)
+            Slider(label, setting_key, game, min_val, max_val, step, pos, self.font)
+            for label, setting_key, game, min_val, max_val, step, pos in self.video_sliders_config
         ]
         self.video_toggles = [
-            Toggle("Fullscreen", 'FULLSCREEN', game, (WIDTH/2 - 100, 360), self.font),
-            Toggle("V-Sync", 'VSYNC', game, (WIDTH/2 - 100, 410), self.font)
+            Toggle(label, setting_key, game, pos, self.font)
+            for label, setting_key, game, pos in self.video_toggles_config
         ]
 
-        # Sound tab sliders
-        self.sound_sliders = [
-            Slider("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH/2 - 100, 180), self.font),
-            Slider("Music Volume", 'MUSIC_VOL', game, 0.0, 1.0, 0.01, (WIDTH/2 - 100, 240), self.font),
-            Slider("SFX Volume", 'SFX_VOL', game, 0.0, 1.0, 0.01, (WIDTH/2 - 100, 300), self.font)
+        # Sound tab sliders configuration
+        self.sound_sliders_config = [
+            ("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 180)),
+            ("Music Volume", 'MUSIC_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 240)),
+            ("SFX Volume", 'SFX_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 300))
         ]
-        # Controls bindings
+
+        # Dynamically create sliders for sound settings
+        self.sound_sliders = [
+            Slider(label, setting_key, game, min_val, max_val, step, pos, self.font)
+            for label, setting_key, game, min_val, max_val, step, pos in self.sound_sliders_config
+        ]
+
+        # Controls bindings configuration
         if 'CONTROLS' not in self.game.settings:
             self.game.settings['CONTROLS'] = {
                 'MOVE_LEFT': pygame.K_LEFT,
@@ -46,14 +68,21 @@ class OptionsScene(BaseScene):
                 'SHOOT': pygame.K_z,
             }
 
-        self.control_bindings = [
-            ControlBinding("Move Left", 'MOVE_LEFT', game, (WIDTH/2 - 150, 180), self.font),
-            ControlBinding("Move Right", 'MOVE_RIGHT', game, (WIDTH/2 - 150, 230), self.font),
-            ControlBinding("Jump", 'JUMP', game, (WIDTH/2 - 150, 280), self.font),
-            ControlBinding("Shoot", 'SHOOT', game, (WIDTH/2 - 150, 330), self.font),
+        self.control_bindings_config = [
+            ("Move Left", 'MOVE_LEFT', game, (WIDTH / 2 - 150, 180)),
+            ("Move Right", 'MOVE_RIGHT', game, (WIDTH / 2 - 150, 230)),
+            ("Jump", 'JUMP', game, (WIDTH / 2 - 150, 280)),
+            ("Shoot", 'SHOOT', game, (WIDTH / 2 - 150, 330))
         ]
 
-        self.back_button = Button("Back", (WIDTH/2 - 100, 480), (150, 50), self.go_back, self.font)
+        # Dynamically create control bindings
+        self.control_bindings = [
+            ControlBinding(action, control, game, pos, self.font)
+            for action, control, game, pos in self.control_bindings_config
+        ]
+
+        # Back button configuration (static in this case)
+        self.back_button = Button("Back", (WIDTH / 2 - 100, 480), (150, 50), self.go_back, self.font)
 
     def set_tab(self, tab_name):
         self.active_tab = tab_name
@@ -64,9 +93,11 @@ class OptionsScene(BaseScene):
 
     def handle_events(self, events):
         for event in events:
+            # Handle tab button events
             for tab in self.tabs:
                 tab.handle_event(event)
 
+            # Handle the active tab-specific events
             if self.active_tab == 'Player':
                 # TODO: Handle player-specific options here if needed
                 pass
@@ -94,6 +125,7 @@ class OptionsScene(BaseScene):
         for tab in self.tabs:
             tab.draw(screen)
 
+        # Draw the active tab's content
         if self.active_tab == "Player":
             pass
         elif self.active_tab == "Video":
@@ -108,5 +140,5 @@ class OptionsScene(BaseScene):
             for binding in self.control_bindings:
                 binding.draw(screen)
 
-        # Back button
+        # Draw back button
         self.back_button.draw(screen)

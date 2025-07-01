@@ -25,7 +25,7 @@ class Slider:
         pygame.draw.rect(screen, GRAY, self.slider_rect)
         pygame.draw.circle(screen, BLACK, (int(handle_x), self.slider_rect.centery), 8)
 
-        label_surf = self.font.render(f"{self.label}: {val:.2f}", True, BLACK)
+        label_surf = self.font.render(f"{self.label}: {int(val*100)}", True, BLACK)
         screen.blit(label_surf, (self.slider_rect.x, self.slider_rect.y - 25))
 
     def handle_event(self, event):
