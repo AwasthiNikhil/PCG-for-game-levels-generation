@@ -14,11 +14,13 @@ class CustomizeMenuScene(BaseScene):
         
         self.menu = []
 
+
         for menu_items in menu_options:
             for i, menu_item in enumerate(menu_items):
                 if menu_items[menu_item]['type'] == 'slider':
                     self.menu.append(
                         Slider2(
+                            display_name= menu_item,
                             pos=(WIDTH/2 - 100,100 + i * 60), 
                             length= 400, 
                             min_value= menu_items[menu_item]['min'], 
@@ -46,7 +48,8 @@ class CustomizeMenuScene(BaseScene):
 
     def on_input_change(self, text):
         # self.text = text
-        print(f"Text set to: {self.text}")
+        pass
+        # print(f"Text set to: {self.text}")
 
     def go_back(self):
         from game_states.gametype import SelectGameTypeScene        
