@@ -4,29 +4,49 @@ from utils.button import Button
 from settings import WHITE
 from settings import WIDTH, HEIGHT
 from utils.slider import Slider
+from utils.slider2 import Slider2
+from utils.inputfield import InputField
 
 class CustomizeMenuScene(BaseScene):
     def __init__(self, game, *menu_options):
         super().__init__(game)
         self.font = pygame.font.SysFont("Arial", 24)
         
-        self.menu_options = menu_options 
-        print(*self.menu_options)
+        self.menu = []
+
+        for menu_items in menu_options:
+            for i, menu_item in enumerate(menu_items):
+                if menu_items[menu_item]['type'] == 'slider':
+                    self.menu.append(
+                        Slider2(
+                            pos=(WIDTH/2 - 100,100 + i * 60), 
+                            length= 400, 
+                            min_value= menu_items[menu_item]['min'], 
+                            max_value= menu_items[menu_item]['max'], 
+                            initial_value= menu_items[menu_item]['value'], 
+                            callback=self.on_slider_change
+                        )
+                    )
+                elif menu_items[menu_item]['type'] == 'input':
+                    self.menu.append(
+                        InputField(
+                            menu_item,
+                            self.on_input_change,
+                            game,
+                            (WIDTH/2 - 100,100 + i * 60),
+                            (400, 40),
+                            pygame.font.SysFont("Arial", 30)
+                        )
+                    )
         
-        # Sound button sliders configuration
-        self.sound_sliders_config = [
-            ("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 180)),
-        ]
-
-        # Dynamically create sliders for sound settings
-        self.sound_sliders = [
-            Slider(label, setting_key, game, min_val, max_val, step, pos, self.font)
-            for label, setting_key, game, min_val, max_val, step, pos in self.sound_sliders_config
-        ]
-
-        # Back button configuration (static in this case)
         self.back_button = Button("Back", (WIDTH / 2 - 100, 480), (150, 50), self.go_back, self.font)
 
+    def on_slider_change(self, value):
+        print(f"Slider value: {value}")
+
+    def on_input_change(self, text):
+        # self.text = text
+        print(f"Text set to: {self.text}")
 
     def go_back(self):
         from game_states.gametype import SelectGameTypeScene        
@@ -34,6 +54,8 @@ class CustomizeMenuScene(BaseScene):
 
     def handle_events(self, events):
         for event in events:
+            for menu in self.menu:
+                menu.handle_event(event)
             self.back_button.handle_event(event)
 
     def update(self):
@@ -42,8 +64,7 @@ class CustomizeMenuScene(BaseScene):
     def draw(self, screen):
         screen.fill(WHITE)
         
-        for slider in self.sound_sliders:
-            slider.draw(screen)
+        for menu in self.menu:
+            menu.draw(screen)
 
-        # Draw back button
         self.back_button.draw(screen)

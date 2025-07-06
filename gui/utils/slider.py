@@ -16,6 +16,7 @@ class Slider:
 
     def get_value(self):
         return self.game.settings[self.key]
+        # return 1
 
     def draw(self, screen):
         val = self.get_value()
@@ -41,3 +42,4 @@ class Slider:
         value = self.min + percent * (self.max - self.min)
         stepped_value = round(value / self.step) * self.step
         self.game.settings[self.key] = max(self.min, min(self.max, stepped_value))
+        # print(max(self.min, min(self.max, stepped_value)))
