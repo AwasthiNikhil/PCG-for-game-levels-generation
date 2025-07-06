@@ -8,6 +8,7 @@ from settings import WIDTH, HEIGHT, BLUE
 from game_states.gametype import SelectGameTypeScene
 from game_states.options import OptionsScene
 from game_states.leaderboard import Leaderboard
+from game_states.shop import ShopScene
 
 class MenuScene(BaseScene):
     def __init__(self, game):
@@ -29,6 +30,7 @@ class MenuScene(BaseScene):
             "Start Game": self.start_game,
             "Leaderboard": self.open_leaderboard,
             "Options": self.open_options,
+            "Shop": self.open_shop,
             "Quit": self.quit_game
         }
 
@@ -46,6 +48,9 @@ class MenuScene(BaseScene):
 
     def open_options(self):
         self.game.scene_manager.go_to(OptionsScene(self.game))
+        
+    def open_shop(self):
+        self.game.scene_manager.go_to(ShopScene(self.game))
         
     def quit_game(self):
         pygame.quit()

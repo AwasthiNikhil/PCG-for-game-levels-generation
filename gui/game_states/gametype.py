@@ -26,14 +26,14 @@ class SelectGameTypeScene(BaseScene):
                 'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
                 'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
                 'seed': {'value': None, 'type': 'input'},
-                'wall_probability': {'value': 0.2, 'type': 'slider', 'min': 0.0, 'max': 100, 'step': 1},
+                'wall_probability': {'value': 20, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
             },
             'perlin': {
                 'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
                 'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
                 'seed': {'value': None, 'type': 'input'},
-                'scale': {'value': 2, 'type': 'slider', 'min': 1, 'max': 10, 'step': 0.1},
-                'threshold': {'value': 0, 'type': 'slider', 'min': 0, 'max': 1, 'step': 0.1},
+                'scale': {'value': 2, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
+                'threshold': {'value': 0, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
                 'min_room_size': {'value': 4, 'type': 'slider', 'min': 1, 'max': 20, 'step': 1},
             },
             'simplex': {
@@ -47,7 +47,7 @@ class SelectGameTypeScene(BaseScene):
                 'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
                 'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
                 'seed': {'value': None, 'type': 'input'},
-                'wall_probability': {'value': 0.55, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
+                'wall_probability': {'value': 55, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
                 'iterations': {'value': 1, 'type': 'slider', 'min': 1, 'max': 10, 'step': 1},
             },
             'bSP': {

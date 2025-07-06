@@ -11,9 +11,7 @@ class CustomizeMenuScene(BaseScene):
     def __init__(self, game, *menu_options):
         super().__init__(game)
         self.font = pygame.font.SysFont("Arial", 24)
-        
         self.menu = []
-
 
         for menu_items in menu_options:
             for i, menu_item in enumerate(menu_items):
@@ -21,12 +19,12 @@ class CustomizeMenuScene(BaseScene):
                     self.menu.append(
                         Slider2(
                             display_name= menu_item,
-                            pos=(WIDTH/2 - 100,100 + i * 60), 
-                            length= 400, 
-                            min_value= menu_items[menu_item]['min'], 
-                            max_value= menu_items[menu_item]['max'], 
-                            initial_value= menu_items[menu_item]['value'], 
-                            callback=self.on_slider_change
+                            pos= (WIDTH/2 - 100,100 + i * 60), 
+                            length=  400, 
+                            min_value=  menu_items[menu_item]['min'], 
+                            max_value=  menu_items[menu_item]['max'], 
+                            initial_value=  menu_items[menu_item]['value'], 
+                            callback= self.on_slider_change,
                         )
                     )
                 elif menu_items[menu_item]['type'] == 'input':
@@ -41,24 +39,28 @@ class CustomizeMenuScene(BaseScene):
                         )
                     )
         
-        self.back_button = Button("Back", (WIDTH / 2 - 100, 480), (150, 50), self.go_back, self.font)
+        self.play_button = Button("Play", (WIDTH / 2 - 100, 480), (150, 50), self.play, self.font)
+        self.back_button = Button("Back", (WIDTH / 2 - 100, 550), (150, 50), self.go_back, self.font)
 
-    def on_slider_change(self, value):
-        print(f"Value: {value:.2f}")
+    def on_slider_change(self, menu_item, value):
+        print(f"{menu_item}: {value:.2f}")
 
-    def on_input_change(self, text):
-        # self.text = text
-        pass
-        # print(f"Text set to: {self.text}")
+    def on_input_change(self, menu_item, text):
+        print(f"{menu_item}: {text}")
 
     def go_back(self):
         from game_states.gametype import SelectGameTypeScene        
         self.game.scene_manager.go_to(SelectGameTypeScene(self.game))
+        
+    def play(self):
+        from game_states.loadgame import LoadGame        
+        self.game.scene_manager.go_to(LoadGame(self.game))
 
     def handle_events(self, events):
         for event in events:
             for menu in self.menu:
                 menu.handle_event(event)
+            self.play_button.handle_event(event)
             self.back_button.handle_event(event)
 
     def update(self):
@@ -70,4 +72,5 @@ class CustomizeMenuScene(BaseScene):
         for menu in self.menu:
             menu.draw(screen)
 
+        self.play_button.draw(screen)
         self.back_button.draw(screen)
