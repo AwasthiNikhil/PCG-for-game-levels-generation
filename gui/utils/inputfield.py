@@ -16,13 +16,17 @@ class InputField:
         self.active = False
         self.cursor_pos = len(self.text)
         self.color_inactive = GRAY
-        self.color_active = (127,127,127)
+        self.color_active = (127, 127, 127)
+
+        # Label surface and rect
+        self.label_surf = self.font.render(self.label, True, BLACK)
+        self.label_rect = self.label_surf.get_rect()
+        self.label_rect.midright = (self.rect.x - 10, self.rect.centery)
 
     def draw(self, screen):
-        # Draw label
-        label_surf = self.font.render(self.label, True, BLACK)
-        screen.blit(label_surf, (self.rect.x, self.rect.y - 25))
-        
+        # Draw label to the left of input field
+        screen.blit(self.label_surf, self.label_rect)
+
         # Draw the input field rectangle
         color = self.color_active if self.active else self.color_inactive
         pygame.draw.rect(screen, color, self.rect)
@@ -46,31 +50,30 @@ class InputField:
             # If the user clicks inside the input field, toggle the active state
             if self.rect.collidepoint(event.pos):
                 self.active = True
-                self.cursor_pos = len(self.text)  # Reset cursor position to the end
+                self.cursor_pos = len(self.text)
             else:
+                if self.active:
+                    self.func(self._get_validated_input())
                 self.active = False
-                self.func(self._get_validated_input())
 
         elif event.type == pygame.KEYDOWN:
             if self.active:
                 if event.key == pygame.K_RETURN:
-                    # Enter key pressed, store the value
                     self.func(self._get_validated_input())
                 elif event.key == pygame.K_BACKSPACE:
-                    # Backspace key pressed, remove last character
-                    self.text = self.text[:-1]
-                elif event.key == pygame.K_TAB:
-                    # Tab key, just move the cursor one position forward
+                    self.text = self.text[:max(0, self.cursor_pos - 1)] + self.text[self.cursor_pos:]
+                    self.cursor_pos = max(0, self.cursor_pos - 1)
+                elif event.key == pygame.K_LEFT:
+                    self.cursor_pos = max(0, self.cursor_pos - 1)
+                elif event.key == pygame.K_RIGHT:
                     self.cursor_pos = min(len(self.text), self.cursor_pos + 1)
                 else:
-                    # Any other key, add the character to the text
-                    if len(self.text) < self.max_len:  # Limit input length to avoid overflow
+                    if len(self.text) < self.max_len:
                         self.text = self.text[:self.cursor_pos] + event.unicode + self.text[self.cursor_pos:]
                         self.cursor_pos += 1
 
     def _get_validated_input(self):
-        """Validate and return the input, ensuring it's the correct type."""
         try:
             return self.input_type(self.text) if self.text else None
         except ValueError:
-            return None  # Return None or a default value if the conversion fails
+            return None
