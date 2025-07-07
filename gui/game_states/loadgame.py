@@ -70,7 +70,7 @@ class LoadGame(BaseScene):
             f'http://127.0.0.1:5000/generate/{type_map[self.data["type"]]}'
             f'?x={self.data["width"]}'
             f'&y={self.data["height"]}'
-            f'&seed={self.data["seed"]}'
+            f'&seed={self.data["seed"] if not self.data["seed"] == None else ""}'
             f'&scale={self.data.get("scale", "")}'
             f'&min_leaf_size={self.data.get("min_leaf_size", "")}'
             f'&max_leaf_size={self.data.get("max_leaf_size", "")}'
@@ -80,7 +80,6 @@ class LoadGame(BaseScene):
             f'&max_rooms={self.data.get("max_rooms", "")}'
             f'&iterations={self.data.get("iterations", "")}'
         )
-
         try:
             level_data = LevelLoader(url).get_grid()
             self.level_data = level_data

@@ -70,8 +70,8 @@ class SelectGameTypeScene(BaseScene):
         self.button_callbacks = {
             "Random": lambda : self.customize_menu('random', customize_menu_options['random']),
             "Perlin": lambda : self.customize_menu('perlin', customize_menu_options['perlin']),
-            "Simplex": lambda : self.customize_menu('cellular', customize_menu_options['simplex']),
-            "Cellular Automata": lambda : self.customize_menu('bsp', customize_menu_options['cellular']),
+            "Simplex": lambda : self.customize_menu('simplex', customize_menu_options['simplex']),
+            "Cellular Automata": lambda : self.customize_menu('cellular', customize_menu_options['cellular']),
             "Binary Space Partitioning": lambda : self.customize_menu('bsp', customize_menu_options['bSP']),
             "Graph": lambda : self.customize_menu('graph', customize_menu_options['graph']),
             "Back": self.go_back,
