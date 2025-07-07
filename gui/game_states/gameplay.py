@@ -7,12 +7,13 @@ from utils.heplers import import_image, import_folder
 from game_states.pause import PauseScene  
 
 class GameplayScene(BaseScene):
-    def __init__(self, game):
+    def __init__(self, game, data):
         super().__init__(game)
         self.game = game
         
         if not self.game.paused:
             print('game started')
+            print(data)
         else:
             print('game resumed')
         

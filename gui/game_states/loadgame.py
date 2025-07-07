@@ -12,6 +12,8 @@ class LoadGame(BaseScene):
         super().__init__(game)
         self.data = data
         self.loading = True
+        self.testing = False # to see loading screen, might use for other testing as well
+        
         self.font = pygame.font.SysFont("Arial", 24)
         self.spinner_angle = 0
         self.dot_timer = 0
@@ -86,10 +88,14 @@ class LoadGame(BaseScene):
             level_data = LevelLoader(url).get_grid()
             self.level_data = level_data
             self.loading = False
+            from game_states.gameplay import GameplayScene
+            self.game.scene_manager.go_to(GameplayScene(self.game, self.level_data))  
+            
+            
         except Exception as e:
             print(f"Error loading level: {e}")
             self.joke = "Something went wrong!"
-            pygame.time.wait(3000)  # Optional: short pause to show the message
+            pygame.time.wait(3000) # show error message for 3 sec
             self.go_back()
 
     def go_back(self):
@@ -102,11 +108,11 @@ class LoadGame(BaseScene):
 
     def handle_events(self, events):
         for event in events:
-            if self.loading and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE :
+            if (self.loading or self.testing) and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE :
                 self.go_back()
 
     def update(self):
-        if self.loading:
+        if self.loading or self.testing:
             # Spin spinner
             self.spinner_angle = (self.spinner_angle + 5) % 360
 
@@ -141,7 +147,8 @@ class LoadGame(BaseScene):
     def draw(self, screen):
         screen.fill(WHITE)
 
-        if self.loading:                
+        if self.loading or self.testing:  
+                
             # Spinner
             center = (WIDTH // 2, HEIGHT // 2 - 40)
             self.draw_spinner(screen, center, 40)
