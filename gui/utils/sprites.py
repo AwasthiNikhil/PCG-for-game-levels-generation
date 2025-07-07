@@ -1,5 +1,6 @@
 from settings import *
 import pygame
+from os.path import join
 
 class Sprite(pygame.sprite.Sprite):
     def __init__(self, pos, surf, groups):
@@ -37,19 +38,16 @@ class Player(AnimatedSprite):
         self.collision_sprites = collision_sprites
         self.exit_sprite = exit_sprite
         self.collectible_sprite = collectible_sprite
-        self.speed = PLAYER_SPEED
-        self.gravity = PLAYER_GRAVITY
+        self.speed = 600
+        self.gravity = 10
         self.on_floor = False
         self.has_key = False
     
     def input(self):
         keys = pygame.key.get_pressed()
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
-        # self.direction.y = int(keys[pygame.K_s]) - int(keys[pygame.K_w])
-        # self.direction = self.direction.normalize() if self.direction else self.direction
-        
-        if keys[pygame.K_SPACE] and self.on_floor:
-            self.direction.y = -JUMP
+        if keys[pygame.K_w] and self.on_floor:
+            self.direction.y = -12
         
     def move(self, dt):
         # horizontak

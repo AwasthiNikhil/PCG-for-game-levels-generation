@@ -6,7 +6,6 @@ from core.base_scene import BaseScene
 from settings import WHITE, WIDTH, HEIGHT
 from utils.levelloader import LevelLoader
 
-
 class LoadGame(BaseScene):
     def __init__(self, game, data):
         super().__init__(game)
@@ -82,27 +81,18 @@ class LoadGame(BaseScene):
             f'&iterations={self.data.get("iterations", "")}'
         )
 
-        print("Requesting level from:", url)
-
         try:
             level_data = LevelLoader(url).get_grid()
             self.level_data = level_data
             self.loading = False
             from game_states.gameplay import GameplayScene
-            self.game.scene_manager.go_to(GameplayScene(self.game, self.level_data))  
-            
-            
+            self.game.scene_manager.go_to(GameplayScene(self.game, self.level_data))              
         except Exception as e:
-            print(f"Error loading level: {e}")
             self.joke = "Something went wrong!"
             pygame.time.wait(3000) # show error message for 3 sec
             self.go_back()
 
     def go_back(self):
-        print("Returning to previous menu due to failure.")
-        self.data = None
-        self.level_data = None
-        self.loading = False
         from game_states.gametype import SelectGameTypeScene
         self.game.scene_manager.go_to(SelectGameTypeScene(self.game))
 
@@ -164,4 +154,3 @@ class LoadGame(BaseScene):
             joke_rect = joke_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 70))
             screen.blit(joke_text, joke_rect)
         
-            

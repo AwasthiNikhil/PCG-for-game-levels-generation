@@ -1,4 +1,5 @@
 import pygame
+from settings import *
 
 class AllSprites(pygame.sprite.Group):
     def __init__(self):
@@ -7,8 +8,8 @@ class AllSprites(pygame.sprite.Group):
         self.offset = pygame.Vector2()
         
     def draw(self, target_position):
-        self.offset.x = -(target_position[0] - 1280/2)
-        self.offset.y = -(target_position[1] - 720/2)
+        self.offset.x = -(target_position[0] - WIDTH/2)
+        self.offset.y = -(target_position[1] - HEIGHT/2)
         
         ground_sprites = [sprite for sprite in self if sprite.type == 'ground']
         object_sprites = [sprite for sprite in self if not sprite.type == 'ground']

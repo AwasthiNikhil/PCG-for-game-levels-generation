@@ -12,6 +12,9 @@ class Game:
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.paused = False
+        
+        self.player_speed = 200
+        self.jump_height = 200
         self.settings = {
             'WIDTH': 25,
             'HEIGHT': 25,
@@ -37,7 +40,7 @@ class Game:
             self.scene_manager.scene.draw(self.screen)
 
             pygame.display.flip()
-            self.clock.tick(FPS)
+            self.dt = self.clock.tick()/1000
 
         pygame.quit()
 
