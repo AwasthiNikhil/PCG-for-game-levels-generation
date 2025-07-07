@@ -1,13 +1,16 @@
 import pygame
+import threading
 import math
 import random
 from core.base_scene import BaseScene
 from settings import WHITE, WIDTH, HEIGHT
+from utils.levelloader import LevelLoader
+
 
 class LoadGame(BaseScene):
     def __init__(self, game, data):
         super().__init__(game)
-        print(data ," received")
+        self.data = data
         self.loading = True
         self.font = pygame.font.SysFont("Arial", 24)
         self.spinner_angle = 0
@@ -49,9 +52,51 @@ class LoadGame(BaseScene):
         self.request_level()
         
     def request_level(self):
-        print("Requesting level data from server...")
+        thread = threading.Thread(target=self.load_level_data)
+        thread.start()
+
+    def load_level_data(self):
+        type_map = {
+            "random": 1,
+            "perlin": 2,
+            "simplex": 3,
+            "cellular": 4,
+            "bsp": 5,
+            "graph": 6,
+        }
+
+        url = (
+            f'http://127.0.0.1:5000/generate/{type_map[self.data["type"]]}'
+            f'?x={self.data["width"]}'
+            f'&y={self.data["height"]}'
+            f'&seed={self.data["seed"]}'
+            f'&scale={self.data.get("scale", "")}'
+            f'&min_leaf_size={self.data.get("min_leaf_size", "")}'
+            f'&max_leaf_size={self.data.get("max_leaf_size", "")}'
+            f'&wall_probability={self.data.get("wall_probability", "")}'
+            f'&threshold={self.data.get("threshold", "")}'
+            f'&min_room_size={self.data.get("min_room_size", "")}'
+            f'&max_rooms={self.data.get("max_rooms", "")}'
+            f'&iterations={self.data.get("iterations", "")}'
+        )
+
+        print("Requesting level from:", url)
+
+        try:
+            level_data = LevelLoader(url).get_grid()
+            self.level_data = level_data
+            self.loading = False
+        except Exception as e:
+            print(f"Error loading level: {e}")
+            self.joke = "Something went wrong!"
+            pygame.time.wait(3000)  # Optional: short pause to show the message
+            self.go_back()
 
     def go_back(self):
+        print("Returning to previous menu due to failure.")
+        self.data = None
+        self.level_data = None
+        self.loading = False
         from game_states.gametype import SelectGameTypeScene
         self.game.scene_manager.go_to(SelectGameTypeScene(self.game))
 

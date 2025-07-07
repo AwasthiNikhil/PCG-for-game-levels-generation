@@ -45,9 +45,11 @@ class CustomizeMenuScene(BaseScene):
         self.back_button = Button("Back", (WIDTH / 2 - 100, 550), (150, 50), self.go_back, self.font)
 
     def on_slider_change(self, menu_item, value):
+        self.data[menu_item] = value
         print(f"{menu_item}: {value:.2f}")
 
     def on_input_change(self, menu_item, value):
+        self.data[menu_item] = value
         print(f"{menu_item}: {value}")
 
     def go_back(self):
