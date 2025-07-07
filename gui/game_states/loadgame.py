@@ -1,112 +1,115 @@
 import pygame
+import math
+import random
 from core.base_scene import BaseScene
-from utils.button import Button
-from settings import WHITE
-from settings import WIDTH, HEIGHT
-from utils.slider import Slider
-from utils.controlbinding import ControlBinding
+from settings import WHITE, WIDTH, HEIGHT
 
 class LoadGame(BaseScene):
-    def __init__(self, game):
+    def __init__(self, game, data):
         super().__init__(game)
+        print(data ," received")
+        self.loading = True
         self.font = pygame.font.SysFont("Arial", 24)
-        self.active_tab = "Player"
+        self.spinner_angle = 0
+        self.dot_timer = 0
+        self.dot_count = 0
+        self.joke_timer = 0
 
-        # Tab button configuration (Label -> Callback function)
-        self.tabs_config = {
-            "Player": lambda: self.set_tab("Player"),
-            "Sound": lambda: self.set_tab("Sound"),
-            "Controls": lambda: self.set_tab("Controls")
-        }
+        self.jokes = [
+            "Reticulating splines...",
+            "Stealing RAM from neighbors...",
+            "Dividing by zero (just once)...",
+            "Feeding pigeons your save data...",
+            "Spinning faster to impress you...",
+            "Loading the meaning of life...",
+            "Please wait... resisting urge to crash.",
+            "Charging flux capacitor...",
+            "Assembling spaghetti code...",
+            "Calculating the weight of fun...",
+            "Consulting the elder gods...",
+            "Unzipping infinite monkeys on typewriters...",
+            "Feeding bits to the byte beast...",
+            "Making things up as we go...",
+            "Debugging the debugger...",
+            "Polishing pixels...",
+            "Aligning the stars...",
+            "Reversing entropy...",
+            "Summoning rubber duck...",
+            "Please do not tap the glass...",
+            "Extremely serious business in progress...",
+            "Swapping batteries in the simulation...",
+            "Quantum tunneling into the mainframe...",
+            "Warming up our ones and zeroes...",
+            "Talking to servers nicely...",
+            "Sacrificing a byte to the god of bugs..."
+        ]
 
-        # Dynamically create tab buttons
-        self.tabs = [Button(name, (430 + i * 120, 100), (100, 40), callback, self.font)
-                     for i, (name, callback) in enumerate(self.tabs_config.items())]
-
+        self.joke = random.choice(self.jokes)
         
-        # Sound tab sliders configuration
-        self.sound_sliders_config = [
-            ("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 180)),
-            ("Music Volume", 'MUSIC_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 240)),
-            ("SFX Volume", 'SFX_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 300))
-        ]
-
-        # Dynamically create sliders for sound settings
-        self.sound_sliders = [
-            Slider(label, setting_key, game, min_val, max_val, step, pos, self.font)
-            for label, setting_key, game, min_val, max_val, step, pos in self.sound_sliders_config
-        ]
-
-        # Controls bindings configuration
-        if 'CONTROLS' not in self.game.settings:
-            self.game.settings['CONTROLS'] = {
-                'MOVE_LEFT': pygame.K_LEFT,
-                'MOVE_RIGHT': pygame.K_RIGHT,
-                'JUMP': pygame.K_SPACE,
-                'SHOOT': pygame.K_z,
-            }
-
-        self.control_bindings_config = [
-            ("Move Left", 'MOVE_LEFT', game, (WIDTH / 2 - 150, 180)),
-            ("Move Right", 'MOVE_RIGHT', game, (WIDTH / 2 - 150, 230)),
-            ("Jump", 'JUMP', game, (WIDTH / 2 - 150, 280)),
-            ("Shoot", 'SHOOT', game, (WIDTH / 2 - 150, 330))
-        ]
-
-        # Dynamically create control bindings
-        self.control_bindings = [
-            ControlBinding(action, control, game, pos, self.font)
-            for action, control, game, pos in self.control_bindings_config
-        ]
-
-        # Back button configuration (static in this case)
-        self.back_button = Button("Back", (WIDTH / 2 - 100, 480), (150, 50), self.go_back, self.font)
-
-    def set_tab(self, tab_name):
-        self.active_tab = tab_name
+        self.request_level()
+        
+    def request_level(self):
+        print("Requesting level data from server...")
 
     def go_back(self):
-        from game_states.menu import MenuScene
-        self.game.scene_manager.go_to(MenuScene(self.game))
+        from game_states.gametype import SelectGameTypeScene
+        self.game.scene_manager.go_to(SelectGameTypeScene(self.game))
 
     def handle_events(self, events):
         for event in events:
-            # Handle tab button events
-            for tab in self.tabs:
-                tab.handle_event(event)
-
-            # Handle the active tab-specific events
-            if self.active_tab == 'Player':
-                # TODO: Handle player-specific options here if needed
-                pass
-            elif self.active_tab == "Sound":
-                for slider in self.sound_sliders:
-                    slider.handle_event(event)
-            elif self.active_tab == "Controls":
-                for binding in self.control_bindings:
-                    binding.handle_event(event)
-
-            self.back_button.handle_event(event)
+            if self.loading and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE :
+                self.go_back()
 
     def update(self):
-        pass
+        if self.loading:
+            # Spin spinner
+            self.spinner_angle = (self.spinner_angle + 5) % 360
+
+            # Animate dots
+            self.dot_timer += self.game.clock.get_time()
+            if self.dot_timer > 400:
+                self.dot_timer = 0
+                self.dot_count = (self.dot_count + 1) % 4
+
+            # Random joke every 5 seconds
+            self.joke_timer += self.game.clock.get_time()
+            if self.joke_timer > 3000:
+                self.joke_timer = 0
+                new_joke = random.choice(self.jokes)
+                while new_joke == self.joke:
+                    new_joke = random.choice(self.jokes)
+                self.joke = new_joke
+
+            # Auto exit after 30s
+            if pygame.time.get_ticks() > 30000:
+                # self.loading = False
+                # self.go_back()
+                pass
+
+    def draw_spinner(self, screen, center, radius):
+        angle_rad = math.radians(self.spinner_angle)
+        end_x = center[0] + radius * math.cos(angle_rad)
+        end_y = center[1] + radius * math.sin(angle_rad)
+        pygame.draw.circle(screen, (200, 200, 200), center, radius, 4)
+        pygame.draw.line(screen, (50, 120, 230), center, (end_x, end_y), 6)
 
     def draw(self, screen):
         screen.fill(WHITE)
 
-        # Draw tab buttons
-        for tab in self.tabs:
-            tab.draw(screen)
+        if self.loading:                
+            # Spinner
+            center = (WIDTH // 2, HEIGHT // 2 - 40)
+            self.draw_spinner(screen, center, 40)
 
-        # Draw the active tab's content
-        if self.active_tab == "Player":
-            pass
-        elif self.active_tab == "Sound":
-            for slider in self.sound_sliders:
-                slider.draw(screen)
-        elif self.active_tab == "Controls":
-            for binding in self.control_bindings:
-                binding.draw(screen)
+            # Loading dots
+            dots = "." * self.dot_count
+            loading_text = self.font.render(f"Loading{dots}", True, (0, 0, 0))
+            loading_rect = loading_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 30))
+            screen.blit(loading_text, loading_rect)
 
-        # Draw back button
-        self.back_button.draw(screen)
+            # Joke message
+            joke_text = self.font.render(self.joke, True, (100, 100, 100))
+            joke_rect = joke_text.get_rect(center=(WIDTH // 2, HEIGHT // 2 + 70))
+            screen.blit(joke_text, joke_rect)
+        
+            

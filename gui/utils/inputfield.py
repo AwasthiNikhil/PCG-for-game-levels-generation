@@ -7,7 +7,7 @@ BLUE = (50, 120, 230)
 PLACEHOLDER_COLOR = (150, 150, 150)
 
 class InputField:
-    def __init__(self, label, func, game, pos, size, font, input_type=str, max_len=30, placeholder="Enter text..."):
+    def __init__(self, label, func, game, pos, size, font, input_type=str, max_len=30, placeholder="Write Something..."):
         self.label = label
         self.func = func
         self.game = game

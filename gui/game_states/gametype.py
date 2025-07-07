@@ -68,15 +68,14 @@ class SelectGameTypeScene(BaseScene):
         }
 
         self.button_callbacks = {
-            "Random": lambda : self.customize_menu(customize_menu_options['random']),
-            "Perlin": lambda : self.customize_menu(customize_menu_options['perlin']),
-            "Simplex": lambda : self.customize_menu(customize_menu_options['simplex']),
-            "Cellular Automata": lambda : self.customize_menu(customize_menu_options['cellular']),
-            "Binary Space Partitioning": lambda : self.customize_menu(customize_menu_options['bSP']),
-            "Graph": lambda : self.customize_menu(customize_menu_options['graph']),
+            "Random": lambda : self.customize_menu('random', customize_menu_options['random']),
+            "Perlin": lambda : self.customize_menu('perlin', customize_menu_options['perlin']),
+            "Simplex": lambda : self.customize_menu('cellular', customize_menu_options['simplex']),
+            "Cellular Automata": lambda : self.customize_menu('bsp', customize_menu_options['cellular']),
+            "Binary Space Partitioning": lambda : self.customize_menu('bsp', customize_menu_options['bSP']),
+            "Graph": lambda : self.customize_menu('graph', customize_menu_options['graph']),
             "Back": self.go_back,
         }
-
         
         for idx, (label, callback) in enumerate(self.button_callbacks.items()):
             y_pos = initial_y + (button_height + button_margin) * idx
@@ -86,8 +85,8 @@ class SelectGameTypeScene(BaseScene):
         from game_states.menu import MenuScene
         self.game.scene_manager.go_to(MenuScene(self.game))
         
-    def customize_menu(self, *options):
-        self.game.scene_manager.go_to(CustomizeMenuScene(self.game, *options))
+    def customize_menu(self, level_type, *options):
+        self.game.scene_manager.go_to(CustomizeMenuScene(self.game, level_type, *options))
 
     def handle_events(self, events):
         for event in events:

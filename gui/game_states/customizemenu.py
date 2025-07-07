@@ -8,10 +8,11 @@ from utils.slider2 import Slider2
 from utils.inputfield import InputField
 
 class CustomizeMenuScene(BaseScene):
-    def __init__(self, game, *menu_options):
+    def __init__(self, game, level_type, *menu_options):
         super().__init__(game)
         self.font = pygame.font.SysFont("Arial", 24)
-        self.menu = []
+        self.menu = [] # menu items
+        self.data = {'type': level_type} # level data to pass to the next scene
 
         for menu_items in menu_options:
             for i, menu_item in enumerate(menu_items):
@@ -38,6 +39,7 @@ class CustomizeMenuScene(BaseScene):
                             pygame.font.SysFont("Arial", 30)
                         )
                     )
+                self.data[menu_item] = menu_items[menu_item]['value']
         
         self.play_button = Button("Play", (WIDTH / 2 - 100, 480), (150, 50), self.play, self.font)
         self.back_button = Button("Back", (WIDTH / 2 - 100, 550), (150, 50), self.go_back, self.font)
@@ -45,8 +47,8 @@ class CustomizeMenuScene(BaseScene):
     def on_slider_change(self, menu_item, value):
         print(f"{menu_item}: {value:.2f}")
 
-    def on_input_change(self, menu_item, text):
-        print(f"{menu_item}: {text}")
+    def on_input_change(self, menu_item, value):
+        print(f"{menu_item}: {value}")
 
     def go_back(self):
         from game_states.gametype import SelectGameTypeScene        
@@ -54,7 +56,7 @@ class CustomizeMenuScene(BaseScene):
         
     def play(self):
         from game_states.loadgame import LoadGame        
-        self.game.scene_manager.go_to(LoadGame(self.game))
+        self.game.scene_manager.go_to(LoadGame(self.game, self.data))
 
     def handle_events(self, events):
         for event in events:
