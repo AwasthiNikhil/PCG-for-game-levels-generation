@@ -55,8 +55,8 @@ class GameplayScene(BaseScene):
         self.item_position = self.get_item_spawnable_position()
         self.player_position = self.get_player_spawnable_position()
 
-        # self.exit_door = ExitDoor(self.exit_position, (self.all_sprites, self.exit_sprite))
-        # self.exit_key = Key(self.item_position, (self.all_sprites, self.collectible_sprite))
+        self.exit_door = ExitDoor(self.exit_position, (self.all_sprites, self.exit_sprite))
+        self.exit_key = Key(self.item_position, (self.all_sprites, self.collectible_sprite))
         self.player = Player(self.player_position, self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames, get_new_level=None)    
 
 

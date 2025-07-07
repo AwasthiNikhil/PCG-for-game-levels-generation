@@ -25,7 +25,7 @@ class AnimatedSprite(Sprite):
         self.image = self.frames[int(self.frame_index) % len(self.frames)]
 
 class Player(AnimatedSprite):
-    def __init__(self, pos, groups, collision_sprites, exit_sprite, collectible_sprite, frames, get_new_level):
+    def __init__(self, pos, groups, collision_sprites, exit_sprite, collectible_sprite, frames, get_new_level=None):
 
         super().__init__(frames, pos, groups)
         self.type = 'object'
@@ -114,14 +114,14 @@ class Player(AnimatedSprite):
     
 class ExitDoor(Sprite):
     def __init__(self, pos, groups):
-        surf = pygame.image.load(join('images', 'exit_door', '0.png')).convert_alpha()
+        surf = pygame.image.load(join('assets', 'images', 'exit_door', '0.png')).convert_alpha()
         super().__init__(pos, surf, groups)
-        
+
         self.type = 'exit'
 
 class Key(Sprite):
     def __init__(self, pos, groups):
-        surf = pygame.image.load(join('images', 'key', '0.png')).convert_alpha()
+        surf = pygame.image.load(join('assets', 'images', 'key', '0.png')).convert_alpha()
         super().__init__(pos, surf, groups)
         
         self.type = 'exit'
