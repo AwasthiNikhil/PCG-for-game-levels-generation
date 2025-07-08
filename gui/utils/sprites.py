@@ -131,3 +131,9 @@ class Coin(Sprite):
         super().__init__(pos, image, groups)
                 
         self.type = 'collectible'
+        
+class Throwable(Sprite):
+    def __init__(self, pos, groups, image):
+        super().__init__(pos, image, groups)
+                
+        self.type = 'throwable'

@@ -2,7 +2,7 @@
 
 import pygame
 from core.base_scene import BaseScene
-from settings import BLACK, BLOCK_SIZE, BLOCKS
+from settings import BLACK, BLOCK_SIZE, BLOCKS, WIDTH, HEIGHT
 from utils.heplers import import_image, import_folder
 from game_states.pause import PauseScene  
 from utils.sprites import Sprite, CollisionSprite, ExitDoor, Key, Player
@@ -29,8 +29,36 @@ class GameplayScene(BaseScene):
         
         self.draw_level()
         
+        
+        self.gui_logger = pygame.Surface((500,275), pygame.SRCALPHA)
+        self.gui_logger_rect = self.gui_logger.get_rect(topright=(WIDTH-10, 10))
+        self.gui_font = pygame.font.Font(None, 24)
+        self.gui_font_big = pygame.font.Font(None, 48)
+        
+      
+    def log_gui(self):
+        pygame.draw.rect(
+            surface=self.gui_logger,           
+            color=(255,255,255, 100),            
+            rect=self.gui_logger.get_rect(),  
+            border_radius=10
+        )
+
+        GUI_TEXT = (
+            f'Game Data: {self.game.level_url}',
+            f'Player Position: {self.player.rect.center}',
+            f'Key Position: {self.item_position}',
+            f'Exit Position: {self.exit_position}',
+            f'Key : {"Yes" if self.player.has_key else "No"}',
+        )
+        for i, text in enumerate(GUI_TEXT):
+            text_surface = self.gui_font.render(text, True, (0, 0, 0))
+            self.gui_logger.blit(text_surface, (10, 10 + i * 30))
+
+    
     def load_assets(self):
         self.player_frames = import_folder('images','player')
+        self.bomb_frames = import_folder('images','throwable', 'bomb')
         
     def draw_level(self):
         for y, row in enumerate(self.level_data):
@@ -57,7 +85,15 @@ class GameplayScene(BaseScene):
 
         self.exit_door = ExitDoor(self.exit_position, (self.all_sprites, self.exit_sprite))
         self.exit_key = Key(self.item_position, (self.all_sprites, self.collectible_sprite))
-        self.player = Player(self.player_position, self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames, self.get_new_level)    
+        self.player = Player(
+            self.player_position, 
+            self.all_sprites, 
+            self.collision_sprites, 
+            self.exit_sprite, 
+            self.collectible_sprite, 
+            self.player_frames, 
+            self.get_new_level
+        )    
 
     def get_new_level(self):
         print('requesting new level')
@@ -68,7 +104,6 @@ class GameplayScene(BaseScene):
         from game_states.loadgame import LoadGame
         self.game.scene_manager.go_to(LoadGame(self.game, self.game.level_url))
         
-
     def get_player_spawnable_position(self):
         for y in range(len(self.level_data) - 1):  
             for x in range(len(self.level_data[y]) - 1): 
@@ -118,5 +153,8 @@ class GameplayScene(BaseScene):
         screen.fill(BLACK)
         self.all_sprites.update(self.game.dt) 
         self.all_sprites.draw(self.player.rect.center)
+        self.log_gui()
+        screen.blit(self.gui_logger,  self.gui_logger.get_rect(topright=(WIDTH - 10, 10)))
+        
         
         

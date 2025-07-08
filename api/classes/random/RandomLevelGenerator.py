@@ -11,7 +11,6 @@ class RandomLevelGenerator:
         if seed is not None:
             random.seed(seed)
 
-
         # Fill the inner grid with walls and floors
         for y in range(1, self.grid.height - 1):
             for x in range(1, self.grid.width - 1):
@@ -20,6 +19,8 @@ class RandomLevelGenerator:
                 else:
                     self.grid.grid[y][x] = FLOOR_CHAR
 
+
+        # boundary
         for x in range(self.grid.width):
             self.grid.grid[0][x-1] = WALL_CHAR  # Top boundary
             self.grid.grid[self.grid.height - 1][x-1] = WALL_CHAR  # Bottom boundary

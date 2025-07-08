@@ -1,12 +1,12 @@
 import random
 
 class GraphLevelGenerator:
-    def __init__(self, grid, max_rooms=15, room_min_size=3, room_max_size=10):
+    def __init__(self, grid, max_rooms=15, min_room_size=3, max_room_size=10):
         # todo: check edge cases like min cells cant contain max room etc 
         self.grid = grid
         self.max_rooms = max_rooms
-        self.room_min_size = room_min_size
-        self.room_max_size = room_max_size
+        self.min_room_size = min_room_size
+        self.max_room_size = max_room_size
         self.rooms = []
 
     def generate(self, seed=None):
@@ -24,8 +24,8 @@ class GraphLevelGenerator:
     def _generate_rooms(self):
         attempts = 0
         while len(self.rooms) < self.max_rooms and attempts < self.max_rooms * 10:
-            w = random.randint(self.room_min_size, self.room_max_size)
-            h = random.randint(self.room_min_size, self.room_max_size)
+            w = random.randint(self.min_room_size, self.max_room_size)
+            h = random.randint(self.min_room_size, self.max_room_size)
             x = random.randint(1, self.grid.width - w - 2)
             y = random.randint(1, self.grid.height - h - 2)
             new_room = (x, y, w, h)

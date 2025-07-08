@@ -57,11 +57,10 @@ def perlin(x, y, grad_table):
     return nxy  # Typically in range [-1, 1]
 
 class NativePerlinLevelGenerator:
-    def __init__(self, grid, scale=2.0, threshold=0.0, min_room_size=4):
+    def __init__(self, grid, scale=2.0, threshold=0.0):
         self.grid = grid
         self.scale = scale
         self.threshold = threshold
-        self.min_room_size = min_room_size  # Minimum size to consider converting to walls
 
     def generate(self, seed=None):
         if seed is not None:

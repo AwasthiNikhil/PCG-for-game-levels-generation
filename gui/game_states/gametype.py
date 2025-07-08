@@ -34,7 +34,6 @@ class SelectGameTypeScene(BaseScene):
                 'seed': {'value': None, 'type': 'input'},
                 'scale': {'value': 2, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
                 'threshold': {'value': 0, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
-                'min_room_size': {'value': 4, 'type': 'slider', 'min': 1, 'max': 20, 'step': 1},
             },
             'simplex': {
                 'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
