@@ -57,8 +57,17 @@ class GameplayScene(BaseScene):
 
         self.exit_door = ExitDoor(self.exit_position, (self.all_sprites, self.exit_sprite))
         self.exit_key = Key(self.item_position, (self.all_sprites, self.collectible_sprite))
-        self.player = Player(self.player_position, self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames, get_new_level=None)    
+        self.player = Player(self.player_position, self.all_sprites, self.collision_sprites, self.exit_sprite, self.collectible_sprite, self.player_frames, self.get_new_level)    
 
+    def get_new_level(self):
+        print('requesting new level')
+        self.all_sprites.empty()
+        self.collision_sprites.empty()
+        self.exit_sprite.empty()
+        self.collectible_sprite.empty()
+        from game_states.loadgame import LoadGame
+        self.game.scene_manager.go_to(LoadGame(self.game, self.game.level_url))
+        
 
     def get_player_spawnable_position(self):
         for y in range(len(self.level_data) - 1):  

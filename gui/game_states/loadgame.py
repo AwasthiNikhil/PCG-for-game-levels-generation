@@ -9,9 +9,8 @@ from utils.levelloader import LevelLoader
 class LoadGame(BaseScene):
     def __init__(self, game, data):
         super().__init__(game)
-        self.data = data
+        self.game.level_url = data
         self.loading = True
-        self.testing = False # to see loading screen, might use for other testing as well
         
         self.font = pygame.font.SysFont("Arial", 24)
         self.spinner_angle = 0
@@ -67,18 +66,18 @@ class LoadGame(BaseScene):
         }
 
         url = (
-            f'http://127.0.0.1:5000/generate/{type_map[self.data["type"]]}'
-            f'?x={self.data["width"]}'
-            f'&y={self.data["height"]}'
-            f'&seed={self.data["seed"] if not self.data["seed"] == None else ""}'
-            f'&scale={self.data.get("scale", "")}'
-            f'&min_leaf_size={self.data.get("min_leaf_size", "")}'
-            f'&max_leaf_size={self.data.get("max_leaf_size", "")}'
-            f'&wall_probability={self.data.get("wall_probability", "")}'
-            f'&threshold={self.data.get("threshold", "")}'
-            f'&min_room_size={self.data.get("min_room_size", "")}'
-            f'&max_rooms={self.data.get("max_rooms", "")}'
-            f'&iterations={self.data.get("iterations", "")}'
+            f'http://127.0.0.1:5000/generate/{type_map[self.game.level_url["type"]]}'
+            f'?x={self.game.level_url["width"]}'
+            f'&y={self.game.level_url["height"]}'
+            f'&seed={self.game.level_url["seed"] if not self.game.level_url["seed"] == None else ""}'
+            f'&scale={self.game.level_url.get("scale", "")}'
+            f'&min_leaf_size={self.game.level_url.get("min_leaf_size", "")}'
+            f'&max_leaf_size={self.game.level_url.get("max_leaf_size", "")}'
+            f'&wall_probability={self.game.level_url.get("wall_probability", "")}'
+            f'&threshold={self.game.level_url.get("threshold", "")}'
+            f'&min_room_size={self.game.level_url.get("min_room_size", "")}'
+            f'&max_rooms={self.game.level_url.get("max_rooms", "")}'
+            f'&iterations={self.game.level_url.get("iterations", "")}'
         )
         try:
             level_data = LevelLoader(url).get_grid()
@@ -97,11 +96,11 @@ class LoadGame(BaseScene):
 
     def handle_events(self, events):
         for event in events:
-            if (self.loading or self.testing) and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE :
+            if self.loading  and event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE :
                 self.go_back()
 
     def update(self):
-        if self.loading or self.testing:
+        if self.loading:
             # Spin spinner
             self.spinner_angle = (self.spinner_angle + 5) % 360
 
@@ -136,8 +135,7 @@ class LoadGame(BaseScene):
     def draw(self, screen):
         screen.fill(WHITE)
 
-        if self.loading or self.testing:  
-                
+        if self.loading:  
             # Spinner
             center = (WIDTH // 2, HEIGHT // 2 - 40)
             self.draw_spinner(screen, center, 40)
