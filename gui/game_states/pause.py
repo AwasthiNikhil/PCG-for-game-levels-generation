@@ -8,10 +8,11 @@ class PauseScene(BaseScene):
     def __init__(self, game):
         super().__init__(game)
         self.font = pygame.font.SysFont("Arial", 24)
-
+        print("game paused")
         self.buttons = [
             Button("Resume", (WIDTH/2 - 50, 200), (100, 40), self.resume, self.font),
-            Button("Main Menu", (WIDTH/2 - 50, 270), (100, 40), self.go_back, self.font)
+            Button("Settings", (WIDTH/2 - 50, 270), (100, 40), self.go_back, self.font),
+            Button("Main Menu", (WIDTH/2 - 50, 340), (100, 40), self.go_back, self.font)
         ]
 
     def resume(self):

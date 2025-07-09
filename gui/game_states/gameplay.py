@@ -7,19 +7,16 @@ from utils.heplers import import_image, import_folder
 from game_states.pause import PauseScene  
 from utils.sprites import Sprite, CollisionSprite, ExitDoor, Key, Player
 from utils.groups import AllSprites
+from utils.timer import Timer
 from random import choice, choices
 
 class GameplayScene(BaseScene):
     def __init__(self, game, level_data):
+
         super().__init__(game)
         self.game = game
         self.level_data = level_data
         self.load_assets()
-        
-        if not self.game.paused:
-            print('game started')
-        else:
-            print('game resumed')
         
         # groups
         self.all_sprites = AllSprites()
@@ -28,14 +25,81 @@ class GameplayScene(BaseScene):
         self.collectible_sprite = pygame.sprite.Group()    
         
         self.draw_level()
-        
-        
+    
         self.gui_logger = pygame.Surface((500,275), pygame.SRCALPHA)
         self.gui_logger_rect = self.gui_logger.get_rect(topright=(WIDTH-10, 10))
         self.gui_font = pygame.font.Font(None, 24)
         self.gui_font_big = pygame.font.Font(None, 48)
         
-      
+        self.remaining_time = 0
+        self.countdown_timer = Timer(20000, func = self.countdown, autostart = True, repeat = False)
+        self.timer_surface = pygame.Surface((200,50), pygame.SRCALPHA)
+        self.timer_surface_rect = self.timer_surface.get_rect(midtop=(WIDTH/2, 10))
+        self.game_over_surface = pygame.Surface((WIDTH,HEIGHT), pygame.SRCALPHA)
+        self.game_over_surface_rect = self.game_over_surface.get_rect(center=(WIDTH/2, HEIGHT/2))
+    
+    def interpolate_color(self, start_color, end_color, factor):
+        r = int(start_color[0] * (1 - factor) + end_color[0] * factor)
+        g = int(start_color[1] * (1 - factor) + end_color[1] * factor)
+        b = int(start_color[2] * (1 - factor) + end_color[2] * factor)
+        return (r, g, b)
+    
+    def countdown(self):
+        if self.remaining_time:
+            # Calculate the remaining time
+            remaining_time = self.countdown_timer.update()  # In milliseconds
+            remaining_seconds = remaining_time // 1000  # Convert to seconds
+            minutes = remaining_seconds // 60
+            seconds = remaining_seconds % 60
+            
+            # Calculate the percentage of remaining time
+            if self.countdown_timer.duration > 0:
+                remaining_percentage = remaining_time / self.countdown_timer.duration
+            else:
+                remaining_percentage = 0
+
+            self.timer_surface.fill((0, 0, 0, 0))  
+            # Draw the background of the bar
+            pygame.draw.rect(
+                surface=self.timer_surface,
+                color=(255, 255, 255, 50),  
+                rect=(0, 0, self.timer_surface.get_width(), self.timer_surface.get_height()), 
+                border_radius=10
+            )
+
+            start_color = (0, 255, 0)
+            end_color = (255, 0, 0)  
+            
+            current_color = self.interpolate_color(start_color, end_color, 1 - remaining_percentage)
+             
+            bar_width = self.timer_surface.get_width() * remaining_percentage
+            
+            pygame.draw.rect(
+                surface=self.timer_surface,
+                color=current_color,  
+                rect=(0, 0, bar_width, self.timer_surface.get_height()),  # Fill up to the calculated width
+                border_radius=10
+            )
+
+            # Display the remaining time as text in the middle of the bar
+            time_text = f"{minutes:02}:{seconds:02}"
+            text_surface = self.gui_font.render(time_text, True, (0, 0, 0))  
+            text_rect = text_surface.get_rect(center=self.timer_surface.get_rect().center)
+            self.timer_surface.blit(text_surface, text_rect.topleft)
+    
+    def game_over_func(self, screen):
+        if not self.remaining_time:
+            pygame.draw.rect(
+                surface=self.game_over_surface,
+                color=(255,255,255, 100),  
+                rect=self.game_over_surface.get_rect(),  
+                border_radius=10                  
+            )
+ 
+            text_surface = self.gui_font_big.render('Game Over', True, (0, 0, 0))
+            self.game_over_surface.blit(text_surface, (WIDTH/2, HEIGHT/2))
+            screen.blit(self.game_over_surface)
+
     def log_gui(self):
         pygame.draw.rect(
             surface=self.gui_logger,           
@@ -54,11 +118,11 @@ class GameplayScene(BaseScene):
         for i, text in enumerate(GUI_TEXT):
             text_surface = self.gui_font.render(text, True, (0, 0, 0))
             self.gui_logger.blit(text_surface, (10, 10 + i * 30))
-
     
     def load_assets(self):
         self.player_frames = import_folder('images','player')
         self.bomb_frames = import_folder('images','throwable', 'bomb')
+        # print(self.bomb_frames)
         
     def draw_level(self):
         for y, row in enumerate(self.level_data):
@@ -151,10 +215,21 @@ class GameplayScene(BaseScene):
     
     def draw(self, screen):
         screen.fill(BLACK)
+        
+        self.remaining_time = self.countdown_timer.update()//1000 if self.countdown_timer else 0
         self.all_sprites.update(self.game.dt) 
+        self.countdown_timer.update()
+        
+        
+        
         self.all_sprites.draw(self.player.rect.center)
         self.log_gui()
+        self.countdown()
+        self.game_over_func(screen)
+        
         screen.blit(self.gui_logger,  self.gui_logger.get_rect(topright=(WIDTH - 10, 10)))
+        screen.blit(self.timer_surface, self.timer_surface_rect)
+        
         
         
         

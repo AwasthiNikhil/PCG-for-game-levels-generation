@@ -30,6 +30,7 @@ class Player(AnimatedSprite):
         super().__init__(frames, pos, groups)
         self.type = 'object'
         self.flip = False
+        self.groups = groups
         
         self.get_new_level = get_new_level
         
@@ -48,6 +49,8 @@ class Player(AnimatedSprite):
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         if keys[pygame.K_w] and self.on_floor:
             self.direction.y = -12
+        if pygame.key.get_just_pressed()[pygame.K_SPACE]:
+            Bomb(self.rect.center, (self.groups, self.collision_sprites))
         
     def move(self, dt):
         # horizontak
@@ -133,7 +136,34 @@ class Coin(Sprite):
         self.type = 'collectible'
         
 class Throwable(Sprite):
-    def __init__(self, pos, groups, image):
+    def __init__(self, pos, image, groups):
         super().__init__(pos, image, groups)
                 
         self.type = 'throwable'
+
+
+class Bomb(Throwable):
+    def __init__(self, pos, groups):
+        image = pygame.image.load(join('assets', 'images', 'throwable', 'bomb', '0.png')).convert_alpha()
+        super().__init__(pos, image, groups)
+        
+        self.type = 'bomb'
+        self.rect.center = pos
+        
+        # Physics properties
+        self.pos = pygame.math.Vector2(pos)  # Use float precision for motion
+        self.velocity = pygame.math.Vector2(300, -400)  # Initial velocity (x, y)
+        self.gravity = 800  # Pixels per second^2
+
+    def update(self, dt):
+        # Update velocity with gravity
+        self.velocity.y += self.gravity * dt
+
+        # Update position using velocity
+        self.pos += self.velocity * dt
+        self.rect.center = self.pos
+
+        # Remove if out of bounds
+        if (self.rect.right < 0 or self.rect.left > WIDTH or
+            self.rect.bottom < 0 or self.rect.top > HEIGHT):
+            self.kill()

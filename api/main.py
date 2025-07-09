@@ -16,8 +16,6 @@ app = Flask(__name__)
 
 @app.route('/generate/<int:level_type>', methods=['GET'])
 def generate_level(level_type):
-
-    
     # --- Parse optional query parameters ---
 
     def safe_int(val, default):
@@ -44,7 +42,6 @@ def generate_level(level_type):
     min_room_size = safe_int(request.args.get('min_room_size'), 3)
     max_rooms = safe_int(request.args.get('max_rooms'), 15)
     iterations = safe_int(request.args.get('iterations'), 1)
-    print(threshold)
     
     # Redirect print output
     old_stdout = sys.stdout
