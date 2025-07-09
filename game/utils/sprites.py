@@ -1,5 +1,6 @@
 from settings import *
 import pygame
+from utils.timer import Timer
 from os.path import join
 
 class Sprite(pygame.sprite.Sprite):
@@ -25,10 +26,11 @@ class AnimatedSprite(Sprite):
         self.image = self.frames[int(self.frame_index) % len(self.frames)]
 
 class Player(AnimatedSprite):
-    def __init__(self, pos, groups, collision_sprites, exit_sprite, collectible_sprite, frames, get_new_level=None):
+    def __init__(self, pos, groups, collision_sprites, exit_sprite, collectible_sprite, frames, create_bomb, get_new_level=None):
 
         super().__init__(frames, pos, groups)
         self.type = 'object'
+        self.create_bomb = create_bomb
         self.flip = False
         self.groups = groups
         
@@ -42,15 +44,18 @@ class Player(AnimatedSprite):
         self.speed = 600
         self.gravity = 10
         self.on_floor = False
-        self.has_key = False
+        self.has_key = False        
+        self.bomb_shoot_timer = Timer(500)
+
     
     def input(self):
         keys = pygame.key.get_pressed()
         self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
         if keys[pygame.K_w] and self.on_floor:
             self.direction.y = -12
-        if pygame.key.get_just_pressed()[pygame.K_SPACE]:
-            Bomb(self.rect.center, (self.groups, self.collision_sprites))
+        if keys[pygame.K_SPACE] and not self.bomb_shoot_timer:
+            self.create_bomb(self.rect.center, -1 if self.flip else 1)
+            self.bomb_shoot_timer.activate()
         
     def move(self, dt):
         # horizontak
@@ -110,6 +115,7 @@ class Player(AnimatedSprite):
                     self.get_new_level()
     
     def update(self, dt):   
+        self.bomb_shoot_timer.update()
         self.check_floor()
         self.input()
         self.move(dt)
@@ -140,30 +146,25 @@ class Throwable(Sprite):
         super().__init__(pos, image, groups)
                 
         self.type = 'throwable'
-
-
+            
 class Bomb(Throwable):
-    def __init__(self, pos, groups):
-        image = pygame.image.load(join('assets', 'images', 'throwable', 'bomb', '0.png')).convert_alpha()
-        super().__init__(pos, image, groups)
+    def __init__(self, surf, pos, direction, groups):
+        super().__init__(pos, surf[0], groups)
         
-        self.type = 'bomb'
-        self.rect.center = pos
+        # adjustment
+        self.image = pygame.transform.flip(self.image, direction == -1, False)
         
-        # Physics properties
-        self.pos = pygame.math.Vector2(pos)  # Use float precision for motion
-        self.velocity = pygame.math.Vector2(300, -400)  # Initial velocity (x, y)
+        #movement
+        self.direction = direction
+        self.speed = 850
+        self.velocity = pygame.math.Vector2(300, -400) 
         self.gravity = 800  # Pixels per second^2
-
-    def update(self, dt):
+    
+    def update(self, dt):     
         # Update velocity with gravity
         self.velocity.y += self.gravity * dt
 
         # Update position using velocity
-        self.pos += self.velocity * dt
-        self.rect.center = self.pos
-
-        # Remove if out of bounds
-        if (self.rect.right < 0 or self.rect.left > WIDTH or
-            self.rect.bottom < 0 or self.rect.top > HEIGHT):
-            self.kill()
+        self.rect.centerx += self.direction * self.velocity.x * dt
+        self.rect.centery += self.velocity.y * dt
+        print(self.rect.center)

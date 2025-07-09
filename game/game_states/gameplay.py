@@ -5,7 +5,7 @@ from core.base_scene import BaseScene
 from settings import BLACK, BLOCK_SIZE, BLOCKS, WIDTH, HEIGHT
 from utils.heplers import import_image, import_folder
 from game_states.pause import PauseScene  
-from utils.sprites import Sprite, CollisionSprite, ExitDoor, Key, Player
+from utils.sprites import Sprite, CollisionSprite, ExitDoor, Key, Player, Bomb
 from utils.groups import AllSprites
 from utils.timer import Timer
 from random import choice, choices
@@ -21,6 +21,7 @@ class GameplayScene(BaseScene):
         # groups
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
+        self.bomb_sprites = pygame.sprite.Group()    
         self.exit_sprite = pygame.sprite.Group()        
         self.collectible_sprite = pygame.sprite.Group()    
         
@@ -37,6 +38,11 @@ class GameplayScene(BaseScene):
         self.timer_surface_rect = self.timer_surface.get_rect(midtop=(WIDTH/2, 10))
         self.game_over_surface = pygame.Surface((WIDTH,HEIGHT), pygame.SRCALPHA)
         self.game_over_surface_rect = self.game_over_surface.get_rect(center=(WIDTH/2, HEIGHT/2))
+    
+    def load_assets(self):
+        self.player_frames = import_folder('images','player')
+        self.bomb_frames = import_folder('images','throwable', 'bomb')
+        # print(self.bomb_frames)
     
     def interpolate_color(self, start_color, end_color, factor):
         r = int(start_color[0] * (1 - factor) + end_color[0] * factor)
@@ -118,12 +124,12 @@ class GameplayScene(BaseScene):
         for i, text in enumerate(GUI_TEXT):
             text_surface = self.gui_font.render(text, True, (0, 0, 0))
             self.gui_logger.blit(text_surface, (10, 10 + i * 30))
+            
+    def create_bomb(self, pos, direction):
+        x = pos[0] + direction * 34 if direction == 1 else pos[0] + direction * 34 - self.bomb_frames[0].get_width() 
+        Bomb(self.bomb_frames, (x, pos[1]), direction, (self.all_sprites, self.bomb_sprites))
+   
     
-    def load_assets(self):
-        self.player_frames = import_folder('images','player')
-        self.bomb_frames = import_folder('images','throwable', 'bomb')
-        # print(self.bomb_frames)
-        
     def draw_level(self):
         for y, row in enumerate(self.level_data):
             for x, block in enumerate(row):
@@ -156,8 +162,9 @@ class GameplayScene(BaseScene):
             self.exit_sprite, 
             self.collectible_sprite, 
             self.player_frames, 
+            self.create_bomb,
             self.get_new_level
-        )    
+        )   
 
     def get_new_level(self):
         print('requesting new level')
