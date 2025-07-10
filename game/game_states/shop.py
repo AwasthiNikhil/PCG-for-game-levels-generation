@@ -3,8 +3,8 @@ from core.base_scene import BaseScene
 from utils.button import Button
 from settings import WHITE
 from settings import WIDTH, HEIGHT
-from utils.slider import Slider
 from utils.controlbinding import ControlBinding
+from utils.soundslider import SoundSlider
 
 class ShopScene(BaseScene):
     def __init__(self, game):
@@ -23,7 +23,6 @@ class ShopScene(BaseScene):
         self.tabs = [Button(name, (430 + i * 120, 100), (100, 40), callback, self.font)
                      for i, (name, callback) in enumerate(self.tabs_config.items())]
 
-        
         # Sound tab sliders configuration
         self.sound_sliders_config = [
             ("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 180)),
@@ -33,7 +32,7 @@ class ShopScene(BaseScene):
 
         # Dynamically create sliders for sound settings
         self.sound_sliders = [
-            Slider(label, setting_key, game, min_val, max_val, step, pos, self.font)
+            SoundSlider(label, setting_key, game, min_val, max_val, step, pos, self.font)
             for label, setting_key, game, min_val, max_val, step, pos in self.sound_sliders_config
         ]
 

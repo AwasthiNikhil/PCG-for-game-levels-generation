@@ -3,7 +3,6 @@ from core.base_scene import BaseScene
 from utils.button import Button
 from settings import WHITE
 from settings import WIDTH, HEIGHT
-from utils.slider import Slider
 from utils.slider2 import Slider2
 from utils.inputfield import InputField
 

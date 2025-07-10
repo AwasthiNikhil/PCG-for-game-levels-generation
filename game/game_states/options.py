@@ -3,7 +3,7 @@ from core.base_scene import BaseScene
 from utils.button import Button
 from settings import WHITE
 from settings import WIDTH, HEIGHT
-from utils.slider import Slider
+from utils.soundslider import SoundSlider
 from utils.toggle import Toggle
 from utils.controlbinding import ControlBinding
 
@@ -13,39 +13,35 @@ class OptionsScene(BaseScene):
         self.font = pygame.font.SysFont("Arial", 24)
         self.active_tab = "Player"
 
-        # Tab button configuration (Label -> Callback function)
         self.tabs_config = {
             "Player": lambda: self.set_tab("Player"),
             "Sound": lambda: self.set_tab("Sound"),
             "Controls": lambda: self.set_tab("Controls")
         }
 
-        # Dynamically create tab buttons
         self.tabs = [Button(name, (430 + i * 120, 100), (100, 40), callback, self.font)
                      for i, (name, callback) in enumerate(self.tabs_config.items())]
 
         
-        # Sound tab sliders configuration
         self.sound_sliders_config = [
             ("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 180)),
             ("Music Volume", 'MUSIC_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 240)),
             ("SFX Volume", 'SFX_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 300))
         ]
 
-        # Dynamically create sliders for sound settings
         self.sound_sliders = [
-            Slider(label, setting_key, game, min_val, max_val, step, pos, self.font)
+            SoundSlider(label, setting_key, game, min_val, max_val, step, pos, self.font)
             for label, setting_key, game, min_val, max_val, step, pos in self.sound_sliders_config
         ]
 
-        # Controls bindings configuration
-        if 'CONTROLS' not in self.game.settings:
-            self.game.settings['CONTROLS'] = {
+
+        if not self.game.settings_manager.get_setting('CONTROLS'): 
+            self.game.settings_manager.set_setting('CONTROLS', {   
                 'MOVE_LEFT': pygame.K_LEFT,
                 'MOVE_RIGHT': pygame.K_RIGHT,
                 'JUMP': pygame.K_SPACE,
                 'SHOOT': pygame.K_z,
-            }
+            })
 
         self.control_bindings_config = [
             ("Move Left", 'MOVE_LEFT', game, (WIDTH / 2 - 150, 180)),
@@ -54,13 +50,11 @@ class OptionsScene(BaseScene):
             ("Shoot", 'SHOOT', game, (WIDTH / 2 - 150, 330))
         ]
 
-        # Dynamically create control bindings
         self.control_bindings = [
             ControlBinding(action, control, game, pos, self.font)
             for action, control, game, pos in self.control_bindings_config
         ]
 
-        # Back button configuration (static in this case)
         self.back_button = Button("Back", (WIDTH / 2 - 100, 480), (150, 50), self.go_back, self.font)
 
     def set_tab(self, tab_name):
@@ -109,5 +103,4 @@ class OptionsScene(BaseScene):
             for binding in self.control_bindings:
                 binding.draw(screen)
 
-        # Draw back button
         self.back_button.draw(screen)
