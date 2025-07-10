@@ -7,6 +7,6 @@
         "MOVE_LEFT": 97,
         "MOVE_RIGHT": 100,
         "JUMP": 119,
-        "SHOOT": 32
+        "SHOOT": 102
     }
 }

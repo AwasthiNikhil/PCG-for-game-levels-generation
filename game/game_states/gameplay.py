@@ -163,6 +163,7 @@ class GameplayScene(BaseScene):
             self.collectible_sprite, 
             self.player_frames, 
             self.create_bomb,
+            self.game,
             self.get_new_level
         )   
 

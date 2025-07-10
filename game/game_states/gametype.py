@@ -35,13 +35,13 @@ class SelectGameTypeScene(BaseScene):
                 'scale': {'value': 2, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
                 'threshold': {'value': 0, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
             },
-            'simplex': {
-                'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
-                'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
-                'seed': {'value': None, 'type': 'input'},
-                'scale': {'value': 2, 'type': 'slider', 'min': 1, 'max': 10, 'step': 0.1},
-                'threshold': {'value': 0, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
-            },
+            # 'simplex': {
+            #     'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
+            #     'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
+            #     'seed': {'value': None, 'type': 'input'},
+            #     'scale': {'value': 2, 'type': 'slider', 'min': 1, 'max': 10, 'step': 0.1},
+            #     'threshold': {'value': 0, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
+            # },
             'cellular': {
                 'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
                 'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
@@ -49,13 +49,13 @@ class SelectGameTypeScene(BaseScene):
                 'wall_probability': {'value': 55, 'type': 'slider', 'min': 0, 'max': 100, 'step': 1},
                 'iterations': {'value': 1, 'type': 'slider', 'min': 1, 'max': 10, 'step': 1},
             },
-            'bSP': {
-                'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
-                'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
-                'seed': {'value': None, 'type': 'input'},
-                'min_leaf_size': {'value': 6, 'type': 'slider', 'min': 1, 'max': 20, 'step': 1},
-                'max_leaf_size': {'value': 20, 'type': 'slider', 'min': 10, 'max': 40, 'step': 1},
-            },
+            # 'bSP': {
+            #     'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
+            #     'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
+            #     'seed': {'value': None, 'type': 'input'},
+            #     'min_leaf_size': {'value': 6, 'type': 'slider', 'min': 1, 'max': 20, 'step': 1},
+            #     'max_leaf_size': {'value': 20, 'type': 'slider', 'min': 10, 'max': 40, 'step': 1},
+            # },
             'graph': {
                 'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
                 'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
@@ -69,9 +69,9 @@ class SelectGameTypeScene(BaseScene):
         self.button_callbacks = {
             "Random": lambda : self.customize_menu('random', customize_menu_options['random']),
             "Perlin": lambda : self.customize_menu('perlin', customize_menu_options['perlin']),
-            "Simplex": lambda : self.customize_menu('simplex', customize_menu_options['simplex']),
+            # "Simplex": lambda : self.customize_menu('simplex', customize_menu_options['simplex']),
             "Cellular Automata": lambda : self.customize_menu('cellular', customize_menu_options['cellular']),
-            "Binary Space Partitioning": lambda : self.customize_menu('bsp', customize_menu_options['bSP']),
+            # "Binary Space Partitioning": lambda : self.customize_menu('bsp', customize_menu_options['bSP']),
             "Graph": lambda : self.customize_menu('graph', customize_menu_options['graph']),
             "Back": self.go_back,
         }
