@@ -1,12 +1,6 @@
 {
     "FULLSCREEN": false,
-    "MASTER_VOL": 0.61,
+    "MASTER_VOL": 0.79,
     "MUSIC_VOL": 0.74,
-    "SFX_VOL": 0.48,
-    "CONTROLS": {
-        "MOVE_LEFT": 1073741904,
-        "MOVE_RIGHT": 1073741903,
-        "JUMP": 32,
-        "SHOOT": 122
-    }
+    "SFX_VOL": 0.48
 }

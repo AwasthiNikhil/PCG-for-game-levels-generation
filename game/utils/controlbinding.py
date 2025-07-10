@@ -22,7 +22,9 @@ class ControlBinding:
         screen.blit(label_surf, (self.rect.x + 10, self.rect.y + 8))
 
         # Draw current key name
-        key_val = self.game.settings['CONTROLS'].get(self.action, None)
+        # key_val = self.game.settings['CONTROLS'].get(self.action, None)
+        controls = self.game.settings_manager.get_setting('CONTROLS', {}) 
+        key_val = controls.get(self.action, None)  
         key_name = pygame.key.name(key_val) if key_val else "Unbound"
         key_surf = self.font.render(key_name, True, BLACK)
         screen.blit(key_surf, (self.rect.right - key_surf.get_width() - 10, self.rect.y + 8))
@@ -33,5 +35,9 @@ class ControlBinding:
                 self.listening = True
         elif event.type == pygame.KEYDOWN and self.listening:
             # Update key binding
-            self.game.settings['CONTROLS'][self.action] = event.key
+            # self.game.settings['CONTROLS'][self.action] = event.key
+            controls = self.game.settings_manager.get_setting('CONTROLS', {})
+            controls[self.action] = event.key
+            self.game.settings_manager.set_setting('CONTROLS', controls)
             self.listening = False
+            
