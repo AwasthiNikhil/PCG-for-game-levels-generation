@@ -26,7 +26,13 @@ class Game:
             'FULLSCREEN': self.settings_manager.get_setting('FULLSCREEN', False),
             'MASTER_VOL': self.settings_manager.get_setting('MASTER_VOL', 1.0),
             'MUSIC_VOL': self.settings_manager.get_setting('MUSIC_VOL', 0.7),
-            'SFX_VOL': self.settings_manager.get_setting('SFX_VOL', 0.7)            
+            'SFX_VOL': self.settings_manager.get_setting('SFX_VOL', 0.7),
+            'CONTROLS': self.settings_manager.get_setting('CONTROLS', {
+                'MOVE_LEFT': pygame.K_LEFT,
+                'MOVE_RIGHT': pygame.K_RIGHT,
+                'JUMP': pygame.K_SPACE, 
+                'SHOOT': pygame.K_z
+            })
         }
         self.settings_manager.save_settings(self.settings)  
         self.player_speed = 200
