@@ -63,13 +63,14 @@ class LoadGame(BaseScene):
             "cellular": 4,
             "bsp": 5,
             "graph": 6,
+            "transformer": 7,
         }
 
         url = (
             f'http://127.0.0.1:5000/generate/{type_map[self.game.level_url["type"]]}'
             f'?x={self.game.level_url["width"]}'
             f'&y={self.game.level_url["height"]}'
-            f'&seed={self.game.level_url["seed"] if not self.game.level_url["seed"] == None else ""}'
+            f'&seed={self.game.level_url.get("seed",None)}'
             f'&scale={self.game.level_url.get("scale", "")}'
             f'&min_leaf_size={self.game.level_url.get("min_leaf_size", "")}'
             f'&max_leaf_size={self.game.level_url.get("max_leaf_size", "")}'

@@ -63,6 +63,10 @@ class SelectGameTypeScene(BaseScene):
                 'max_rooms': {'value': 15, 'type': 'slider', 'min': 1, 'max': 50, 'step': 1},
                 'min_room_size': {'value': 3, 'type': 'slider', 'min': 1, 'max': 10, 'step': 1},
                 'max_room_size': {'value': 10, 'type': 'slider', 'min': 5, 'max': 20, 'step': 1},
+            },
+            'transformer': {
+                'width': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
+                'height': {'value': 30, 'type': 'slider', 'min': 10, 'max': 100, 'step': 1},
             }
         }
 
@@ -73,6 +77,7 @@ class SelectGameTypeScene(BaseScene):
             "Cellular Automata": lambda : self.customize_menu('cellular', customize_menu_options['cellular']),
             # "Binary Space Partitioning": lambda : self.customize_menu('bsp', customize_menu_options['bSP']),
             "Graph": lambda : self.customize_menu('graph', customize_menu_options['graph']),
+            "Transformer": lambda : self.customize_menu('transformer', customize_menu_options['transformer']),
             "Back": self.go_back,
         }
         
