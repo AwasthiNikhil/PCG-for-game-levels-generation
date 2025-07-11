@@ -15,6 +15,7 @@ class CollisionSprite(pygame.sprite.Sprite):
         super().__init__(groups)
         self.image = surf
         self.rect = self.image.get_frect(topleft = pos)
+        self.type = 'wall'
 
 class AnimatedSprite(Sprite):
     def __init__(self, frames, pos, groups):
@@ -157,8 +158,10 @@ class Throwable(Sprite):
         self.type = 'throwable'
             
 class Bomb(Throwable):
-    def __init__(self, surf, pos, direction, groups):
+    def __init__(self, surf, pos, direction, groups, collision_sprites):
         super().__init__(pos, surf[0], groups)
+        self.collision_sprites = collision_sprites
+        self.has_exploded = False
         
         # adjustment
         self.image = pygame.transform.flip(self.image, direction == -1, False)
@@ -176,4 +179,25 @@ class Bomb(Throwable):
         # Update position using velocity
         self.rect.centerx += self.direction * self.velocity.x * dt
         self.rect.centery += self.velocity.y * dt
-        print(self.rect.center)
+        if not self.has_exploded:
+            collided_sprites = pygame.sprite.spritecollide(self, self.collision_sprites, False) 
+            if collided_sprites:
+                self.has_exploded = True
+                explosion_center = self.rect.center
+                
+                for sprite in self.collision_sprites:
+                    if abs(sprite.rect.centerx - explosion_center[0]) < BLOCK_SIZE * 1.5 and \
+                        abs(sprite.rect.centery - explosion_center[1]) < BLOCK_SIZE * 1.5:
+                            # sprite.kill()
+                            floor_info = BLOCKS.get(1)
+                            if floor_info:
+                                floor_color = pygame.Color(floor_info['color'])
+                                new_image = pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))
+                                new_image.fill(floor_color) 
+                                sprite.image = new_image 
+                                sprite.type = 'ground' 
+                                print(f"Changed sprite at {sprite.rect.topleft} to floor color: {floor_color}") 
+                            sprite.remove(self.collision_sprites)
+                            
+                            
+                self.kill()

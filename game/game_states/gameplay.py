@@ -127,7 +127,7 @@ class GameplayScene(BaseScene):
             
     def create_bomb(self, pos, direction):
         x = pos[0] + direction * 34 if direction == 1 else pos[0] + direction * 34 - self.bomb_frames[0].get_width() 
-        Bomb(self.bomb_frames, (x, pos[1]), direction, (self.all_sprites, self.bomb_sprites))
+        Bomb(self.bomb_frames, (x, pos[1]), direction, (self.all_sprites, self.bomb_sprites), self.collision_sprites)
    
     
     def draw_level(self):
@@ -138,16 +138,18 @@ class GameplayScene(BaseScene):
                     color = pygame.Color(block_info['color'])
                     image =  pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))    
                     image.fill(color)
-                    Sprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.all_sprites)
-        
-        for y, row in enumerate(self.level_data):
-            for x, block in enumerate(row):
-                block_info = BLOCKS.get(block)
-                if block_info and block_info['name'] == 'wall':
-                    color = pygame.Color(block_info['color'])
-                    image =  pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))    
-                    image.fill(color)
-                    CollisionSprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.collision_sprites)
+                    if block_info['name'] == 'wall': 
+                        CollisionSprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, (self.all_sprites, self.collision_sprites))
+                    elif block_info['name'] == 'floor':
+                        Sprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.all_sprites)
+        # for y, row in enumerate(self.level_data):
+        #     for x, block in enumerate(row):
+        #         block_info = BLOCKS.get(block)
+        #         if block_info and block_info['name'] == 'wall':
+        #             color = pygame.Color(block_info['color'])
+        #             image =  pygame.Surface((BLOCK_SIZE, BLOCK_SIZE))    
+        #             image.fill(color)
+        #             CollisionSprite((x * BLOCK_SIZE, y * BLOCK_SIZE), image, self.collision_sprites)
                     
         self.exit_position = self.get_exit_spawnable_position()
         self.item_position = self.get_item_spawnable_position()
