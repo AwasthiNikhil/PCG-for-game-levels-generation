@@ -1,0 +1,276 @@
+@startuml
+top to bottom direction 
+skinparam classAttributeIconSize 0
+skinparam classIconSize 0
+
+' SHARP ARROWS: Forces corners on relations
+skinparam linetype ortho
+
+' SPREAD THINGS EVENLY: Reduce class packing
+skinparam nodesep 50
+skinparam ranksep 40
+
+' ==================== PACKAGES ====================
+
+package "Core" {
+    class Game {
+        - __init__()
+        + run()
+    }
+    class AudioManager {
+        - __init__()
+        - _load_sfx()
+        + play_music()
+        + stop_music()
+        + play_sfx()
+        + update_volumes()
+    }
+    class SceneManager {
+        - __init__()
+        + go_to()
+    }
+    class BaseScene {
+        - __init__()
+        + handle_events()
+        + update()
+        + draw()
+    }
+    class SettingsManager {
+        - __init__()
+        - _load_settings()
+        + save_settings()
+        + get_setting()
+        + set_setting()
+    }
+    class LevelLoader {
+        - __init__()
+        + get_grid()
+        + parse_level()
+    }
+    class AllSprites {
+        - __init__()
+        + draw()
+    }
+}
+
+package "Scenes" {
+    class CustomizeMenuScene {
+        - __init__()
+        + on_slider_change()
+        + on_input_change()
+        + go_back()
+        + play()
+        + handle_events()
+        + update()
+        + draw()
+    }
+    class GameplayScene {
+        - __init__()
+        + load_assets()
+        + interpolate_color()
+        + countdown()
+        + game_over_func()
+        + log_gui()
+        + create_bomb()
+        + draw_level()
+        + get_new_level()
+        + get_player_spawnable_position()
+        + get_exit_spawnable_position()
+        + get_item_spawnable_position()
+        + handle_events()
+        + update()
+        + draw()
+    }
+    class SelectGameTypeScene {
+        - __init__()
+        + create_buttons()
+        + go_back()
+        + customize_menu()
+        + handle_events()
+        + update()
+        + draw()
+    }
+    class Leaderboard {
+        - __init__()
+        + go_back()
+        + create_leaderboard_data()
+        + handle_events()
+        + update()
+        + draw()
+    }
+    class LoadGame {
+        - __init__()
+        + request_level()
+        + load_level_data()
+        + go_back()
+        + handle_events()
+        + update()
+        + draw_spinner()
+        + draw()
+    }
+    class MenuScene {
+        - __init__()
+        + create_buttons()
+        + start_game()
+        + open_leaderboard()
+        + open_options()
+        + open_shop()
+        + quit_game()
+        + handle_events()
+        + update()
+        + draw()
+    }
+    class OptionsScene {
+        - __init__()
+        + set_tab()
+        + go_back()
+        + handle_events()
+        + update()
+        + draw()
+    }
+    class PauseScene {
+        - __init__()
+        + resume()
+        + go_back()
+        + handle_events()
+        + update()
+        + draw()
+    }
+    class ShopScene {
+        - __init__()
+        + set_tab()
+        + go_back()
+        + handle_events()
+        + update()
+        + draw()
+    }
+}
+
+package "UI Widgets" {
+    class Button {
+        - __init__()
+        + draw()
+        + handle_event()
+    }
+    class ControlBinding {
+        - __init__()
+        + draw()
+        + handle_event()
+    }
+    class InputField {
+        - __init__()
+        + draw()
+        + handle_event()
+        - _get_validated_input()
+    }
+    class Slider2 {
+        - __init__()
+        - _update_handle_from_value()
+        + draw()
+        + handle_event()
+        + get_value()
+    }
+    class SoundSlider {
+        - __init__()
+        + get_value()
+        + draw()
+        + handle_event()
+        - _set_value_from_pos()
+    }
+    class Toggle {
+        - __init__()
+        + draw()
+        + handle_event()
+    }
+}
+
+package "Sprites" {
+    class Sprite {
+        - __init__()
+    }
+    class CollisionSprite {
+        - __init__()
+    }
+    class AnimatedSprite {
+        - __init__()
+        + animate()
+    }
+    class Player {
+        - __init__()
+        + input()
+        + move()
+        + collision()
+        + check_floor()
+        + animate()
+        + check_collectible()
+        + check_finish()
+        + update()
+    }
+    class ExitDoor {
+        - __init__()
+    }
+    class Key {
+        - __init__()
+    }
+    class Coin {
+        - __init__()
+    }
+    class Throwable {
+        - __init__()
+    }
+    class Bomb {
+        - __init__()
+        + update()
+    }
+}
+
+package "Utils" {
+    class Timer {
+        - __init__()
+        - __bool__()
+        + activate()
+        + deactivate()
+        + update()
+    }
+}
+
+' ==================== INHERITANCE ====================
+
+BaseScene <|-- CustomizeMenuScene
+BaseScene <|-- GameplayScene
+BaseScene <|-- SelectGameTypeScene
+BaseScene <|-- Leaderboard
+BaseScene <|-- LoadGame
+BaseScene <|-- MenuScene
+BaseScene <|-- OptionsScene
+BaseScene <|-- PauseScene
+BaseScene <|-- ShopScene
+
+Sprite <|-- AnimatedSprite
+AnimatedSprite <|-- Player
+Sprite <|-- ExitDoor
+Sprite <|-- Key
+Sprite <|-- Coin
+Sprite <|-- Throwable
+Throwable <|-- Bomb
+
+' ==================== ASSOCIATIONS ====================
+
+MenuScene "1" --> "1" AudioManager
+MenuScene "1" --> "*" Button
+MenuScene --> SceneManager
+
+OptionsScene "1" --> "1" SoundSlider
+OptionsScene "1" --> "1..*" Toggle
+
+CustomizeMenuScene "1" --> "*" Slider2
+CustomizeMenuScene "1" --> "*" InputField
+
+GameplayScene "1" --> "1" Player
+GameplayScene "1" --> "*" Bomb
+
+LoadGame "1" --> "1" LevelLoader
+
+ShopScene "1" --> "*" ControlBinding
+
+@enduml

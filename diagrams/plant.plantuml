@@ -1,0 +1,401 @@
+@startuml
+  !theme vibrant
+  skinparam classAttributeIconSize 0
+  skinparam linetype ortho
+
+
+  package "core" {
+    class AudioManager {
+       - settings_manager: SettingsManager
+       - music_path: str
+       - sfx_path: str
+       - sfx: dict
+       + __init__(self, settings_manager: SettingsManager)
+       - _load_sfx(self)
+       + play_music(self, filename: str, loop: int)
+       + stop_music(self)
+       + play_sfx(self, name: str)
+       + update_volumes(self)
+    }
+
+
+    class BaseScene {
+       + game: Game
+       + __init__(self, game: Game)
+       + handle_events(self, events: list)
+       + update(self)
+       + draw(self, screen: pygame.Surface)
+    }
+
+    class SceneManager {
+       - scene: BaseScene
+       + __init__(self, starting_scene: BaseScene)
+       + go_to(self, new_scene: BaseScene)
+    }
+  }
+
+
+  package "game_states" {
+    class CustomizeMenuScene extends BaseScene {
+       - font: pygame.font.Font
+       - menu: list
+       - data: dict
+       - play_button: Button
+       - back_button: Button
+       + __init__(self, game: Game, level_type: str, *menu_options)
+       + on_slider_change(self, menu_item: str, value: float)
+       + on_input_change(self, menu_item: str, value: str)
+       + go_back(self)
+       + play(self)
+    }
+
+
+    class GameplayScene extends BaseScene {
+       - level_data: list
+       - all_sprites: AllSprites
+       - collision_sprites: pygame.sprite.Group
+       - bomb_sprites: pygame.sprite.Group
+       - exit_sprite: pygame.sprite.Group
+       - collectible_sprite: pygame.sprite.Group
+       - player: Player
+       + __init__(self, game: Game, level_data: list)
+       - load_assets(self)
+       - draw_level(self)
+       + create_bomb(self, pos: tuple, direction: int)
+    }
+
+
+    class SelectGameTypeScene extends BaseScene {
+       - font: pygame.font.Font
+       - buttons: list
+       + __init__(self, game: Game)
+       - create_buttons(self)
+       + go_back(self)
+       + customize_menu(self, level_type: str, *options)
+    }
+
+
+    class Leaderboard extends BaseScene {
+       - font: pygame.font.Font
+       - buttons: list
+       - leaderboard_data: list
+       + __init__(self, game: Game)
+       + go_back(self)
+       - create_leaderboard_data(self)
+    }
+
+
+    class LoadGame extends BaseScene {
+       - loading: bool
+       - font: pygame.font.Font
+       - level_data: list
+       + __init__(self, game: Game, data: dict)
+       - request_level(self)
+       - load_level_data(self)
+       + go_back(self)
+    }
+
+
+    class MenuScene extends BaseScene {
+       - font: pygame.font.Font
+       - title_font: pygame.font.Font
+       - buttons: list
+       + __init__(self, game: Game)
+       - create_buttons(self)
+       + start_game(self)
+       + open_leaderboard(self)
+       + open_options(self)
+       + open_shop(self)
+       + quit_game(self)
+    }
+
+
+    class OptionsScene extends BaseScene {
+       - font: pygame.font.Font
+       - active_tab: str
+       - tabs: list
+       - sound_sliders: list
+       - control_bindings: list
+       - back_button: Button
+       + __init__(self, game: Game)
+       + set_tab(self, tab_name: str)
+       + go_back(self)
+    }
+
+
+    class PauseScene extends BaseScene {
+       - font: pygame.font.Font
+       - buttons: list
+       + __init__(self, game: Game)
+       + resume(self)
+       + go_back(self)
+    }
+
+
+    class ShopScene extends BaseScene {
+       - font: pygame.font.Font
+       - active_tab: str
+       - tabs: list
+       - sound_sliders: list
+       - control_bindings: list
+       - back_button: Button
+       + __init__(self, game: Game)
+       + set_tab(self, tab_name: str)
+       + go_back(self)
+    }
+  }
+
+
+  package "utils" {
+    class Button {
+       - text: str
+       - rect: pygame.Rect
+       - callback: function
+       - font: pygame.font.Font
+       - hovered: bool
+       + __init__(self, text: str, pos: tuple, size: tuple, callback: function, font: pygame.font.Font)
+       + draw(self, screen: pygame.Surface)
+       + handle_event(self, event: pygame.event.Event)
+    }
+
+
+    class ControlBinding {
+       - label: str
+       - action: str
+       - game: Game
+       - pos: tuple
+       - font: pygame.font.Font
+       - rect: pygame.Rect
+       - listening: bool
+       + __init__(self, label: str, action: str, game: Game, pos: tuple, font: pygame.font.Font)
+       + draw(self, screen: pygame.Surface)
+       + handle_event(self, event: pygame.event.Event)
+    }
+
+
+    class AllSprites extends pygame.sprite.Group {
+       - display_surface: pygame.Surface
+       - offset: pygame.Vector2
+       + __init__(self)
+       + draw(self, target_position: tuple)
+    }
+
+
+    class InputField {
+       - label: str
+       - func: function
+       - game: Game
+       - rect: pygame.Rect
+       - font: pygame.font.Font
+       - text: str
+       - active: bool
+       + __init__(self, label: str, func: function, game: Game, pos: tuple, size: tuple, font: pygame.font.Font)
+       + draw(self, screen: pygame.Surface)
+       + handle_event(self, event: pygame.event.Event)
+    }
+
+
+    class LevelLoader {
+       - level: str
+       - grid: list
+       + __init__(self, level_url: str, from_api: bool)
+       + get_grid(self)
+       - parse_level(self, level_data: str)
+    }
+
+
+    class SettingsManager {
+       - file_path: str
+       - settings: dict
+       + __init__(self, file_path: str)
+       - _load_settings(self)
+       + save_settings(self, settings_data: dict)
+       + get_setting(self, key: str, default: any)
+       + set_setting(self, key: str, value: any)
+    }
+
+
+    class Slider2 {
+       - display_name: str
+       - pos: tuple
+       - length: int
+       - min_value: float
+       - max_value: float
+       - value: float
+       - callback: function
+       - dragging: bool
+       + __init__(self, display_name: str, pos: tuple, length: int, min_value: float, max_value: float, initial_value: float, callback: function)
+       + draw(self, screen: pygame.Surface)
+       + handle_event(self, event: pygame.event.Event)
+       + get_value(self)
+    }
+
+
+    class SoundSlider {
+       - label: str
+       - key: str
+       - game: Game
+       - min: float
+       - max: float
+       - step: float
+       - pos: tuple
+       - val: float
+       + __init__(self, label: str, key: str, game: Game, min_val: float, max_val: float, step: float, pos: tuple, font: pygame.font.Font)
+       + get_value(self)
+       + draw(self, screen: pygame.Surface)
+       + handle_event(self, event: pygame.event.Event)
+    }
+
+
+    class Timer {
+       - duration: int
+       - start_time: int
+       - active: bool
+       - func: function
+       - repeat: bool
+       + __init__(self, duration: int, func: function, repeat: bool, autostart: bool)
+       + activate(self)
+       + deactivate(self)
+       + update(self)
+    }
+
+
+    class Toggle {
+       - label: str
+       - key: str
+       - game: Game
+       - rect: pygame.Rect
+       - font: pygame.font.Font
+       + __init__(self, label: str, key: str, game: Game, pos: tuple, font: pygame.font.Font)
+       + draw(self, screen: pygame.Surface)
+       + handle_event(self, event: pygame.event.Event)
+    }
+  }
+
+
+  package "sprites" {
+    class Sprite extends pygame.sprite.Sprite {
+       + image: pygame.Surface
+       + rect: pygame.Rect
+       + type: str
+       + __init__(self, pos: tuple, surf: pygame.Surface, groups: tuple)
+    }
+
+
+    class CollisionSprite extends pygame.sprite.Sprite {
+       + image: pygame.Surface
+       + rect: pygame.Rect
+       + type: str
+       + __init__(self, pos: tuple, surf: pygame.Surface, groups: tuple)
+    }
+
+
+    class AnimatedSprite extends Sprite {
+       - frames: list
+       - frame_index: int
+       - animation_speed: int
+       + __init__(self, frames: list, pos: tuple, groups: tuple)
+       + animate(self, dt: float)
+    }
+
+
+    class Player extends AnimatedSprite {
+       - direction: pygame.Vector2
+       - speed: int
+       - gravity: int
+       - on_floor: bool
+       - has_key: bool
+       + __init__(self, pos: tuple, groups: tuple, collision_sprites: pygame.sprite.Group, exit_sprite: pygame.sprite.Group, collectible_sprite: pygame.sprite.Group, frames: list,
+         create_bomb: function, game: Game)
+       - input(self)
+       - move(self, dt: float)
+       - collision(self, direction: str)
+       - check_floor(self)
+       - check_collectible(self)
+       - check_finish(self)
+    }
+
+
+    class ExitDoor extends Sprite {
+       + __init__(self, pos: tuple, groups: tuple)
+    }
+
+    class Key extends Sprite {
+       + __init__(self, pos: tuple, groups: tuple)
+    }
+
+
+    class Coin extends Sprite {
+       + __init__(self, pos: tuple, groups: tuple, image: pygame.Surface)
+    }
+
+    class Throwable extends Sprite {
+       + __init__(self, pos: tuple, image: pygame.Surface, groups: tuple)
+    }
+
+
+    class Bomb extends Throwable {
+       - direction: int
+       - speed: int
+       - velocity: pygame.math.Vector2
+       - gravity: int
+       + __init__(self, surf: list, pos: tuple, direction: int, groups: tuple, collision_sprites: pygame.sprite.Group)
+    }
+  }
+
+
+  class Game {
+     - screen: pygame.Surface
+     - clock: pygame.time.Clock
+     - paused: bool
+     - settings_manager: SettingsManager
+     - audio_manager: AudioManager
+     - scene_manager: SceneManager
+     + __init__(self)
+     + run(self)
+  }
+
+
+  Game "1" *-- "1" SceneManager
+  Game "1" *-- "1" AudioManager
+  Game "1" *-- "1" SettingsManager
+  SceneManager o-- "1" BaseScene
+  BaseScene <|-- GameplayScene
+  BaseScene <|-- MenuScene
+  BaseScene <|-- OptionsScene
+  BaseScene <|-- Leaderboard
+  BaseScene <|-- ShopScene
+  BaseScene <|-- PauseScene
+  BaseScene <|-- CustomizeMenuScene
+  BaseScene <|-- SelectGameTypeScene
+  BaseScene <|-- LoadGame
+
+
+  GameplayScene "1" *-- "1" AllSprites
+  GameplayScene "1" -- "1.." Player
+  GameplayScene "1" -- "1.." CollisionSprite
+  GameplayScene "1" -- "0.." Bomb
+  GameplayScene "1" *-- "1" ExitDoor
+  GameplayScene "1" *-- "1" Key
+  Player "1" *-- "1" Timer
+
+
+  MenuScene "1" -- "1.." Button
+  OptionsScene "1" -- "1.." SoundSlider
+  OptionsScene "1" -- "1.." ControlBinding
+  OptionsScene "1" -- "1.." Toggle
+  CustomizeMenuScene "1" -- "1.." Slider2
+  CustomizeMenuScene "1" -- "1.." InputField
+
+
+  Sprite <|-- AnimatedSprite
+  Sprite <|-- CollisionSprite
+  Sprite <|-- ExitDoor
+  Sprite <|-- Key
+  Sprite <|-- Coin
+  Sprite <|-- Throwable
+  AnimatedSprite <|-- Player
+  Throwable <|-- Bomb
+
+  LoadGame "1" *-- "1" LevelLoader
+  @enduml

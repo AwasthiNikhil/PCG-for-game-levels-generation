@@ -11,6 +11,7 @@ from classes.cellularautomata.CellularAutomataLevelGenerator import CellularAuto
 from classes.bsp.BSPLevelGenerator import BSPLevelGenerator
 from classes.wfc.WFCLevelGenerator import WFCLevelGenerator
 from classes.graph.GraphLevelGenerator import GraphLevelGenerator
+from classes.transformer.leveltransformergenerator import LevelTransformerGenerator
 
 app = Flask(__name__)
 
@@ -66,6 +67,8 @@ def generate_level(level_type):
         level_generator = BSPLevelGenerator(grid, min_leaf_size=min_leaf_size, max_leaf_size=max_leaf_size)
     elif level_type == 6:
         level_generator = GraphLevelGenerator(grid, max_rooms=max_rooms, min_room_size=min_room_size, max_room_size=max_rooms)
+    elif level_type == 7:
+        level_generator = LevelTransformerGenerator(grid, width=width, height=height)
     else:
         print("No type selected. Execution completed.")
         print(">>>")
@@ -78,7 +81,7 @@ def generate_level(level_type):
         post_processor = LevelPostProcessor(grid)
         post_processor.remove_isolated_walls()
 
-    print(">>>")  # End delimiter
+    print(">>>")  
     
     grid.display()
 

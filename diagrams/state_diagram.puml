@@ -1,0 +1,28 @@
+@startuml
+!theme vibrant
+skinparam linetype ortho
+title State Diagram: Game States
+
+[*] --> Menu
+
+state Menu {
+  [*] --> MainMenu
+  MainMenu --> Options: "Options"
+  Options --> MainMenu: "Back"
+  MainMenu --> Leaderboard: "Leaderboard"
+  Leaderboard --> MainMenu: "Back"
+  MainMenu --> Shop: "Shop"
+  Shop --> MainMenu: "Back"
+  MainMenu --> SelectGameType: "Start Game"
+  SelectGameType --> CustomizeMenu: "Select Type"
+  CustomizeMenu --> Loading: "Play"
+  Loading --> Gameplay: "Level Loaded"
+}
+
+Gameplay --> Paused: "Press ESC"
+Paused --> Gameplay: "Resume"
+Paused --> Menu: "Main Menu"
+Gameplay --> GameOver: "Time Up"
+GameOver --> Menu: "OK"
+
+@enduml

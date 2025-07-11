@@ -1,0 +1,89 @@
+
+@startuml
+!theme vibrant
+skinparam linetype ortho
+title Sequence Diagram: Starting a New Game
+
+actor User
+participant "game:Game" as Game
+participant "sceneMgr:SceneManager" as SM
+participant "menu:MenuScene" as Menu
+participant "gameType:SelectGameTypeScene" as GT
+participant "customize:CustomizeMenuScene" as CM
+participant "loader:LoadGame" as LG
+participant "levelLoader:LevelLoader" as LL
+participant "gameplay:GameplayScene" as GP
+
+User -> Game: Run Application
+activate Game
+
+Game -> Menu: create()
+Game -> SM: create(start_scene=menu)
+
+loop Game Loop
+    Game -> SM: handle_events()
+    activate SM
+    SM -> Menu: handle_events(events)
+    activate Menu
+    User -> Menu: Click "Start Game"
+    Menu -> SM: go_to(SelectGameTypeScene)
+    deactivate Menu
+    SM -> GT: create()
+    SM --> Game: scene = gameType
+    deactivate SM
+
+    Game -> SM: handle_events()
+    activate SM
+    SM -> GT: handle_events(events)
+    activate GT
+    User -> GT: Select "Random"
+    GT -> SM: go_to(CustomizeMenuScene)
+    deactivate GT
+    SM -> CM: create()
+    SM --> Game: scene = customize
+    deactivate SM
+
+    Game -> SM: handle_events()
+    activate SM
+    SM -> CM: handle_events(events)
+    activate CM
+    User -> CM: Click "Play"
+    CM -> SM: go_to(LoadGame)
+    deactivate CM
+    SM -> LG: create()
+    SM --> Game: scene = loader
+    deactivate SM
+
+    Game -> SM: update()
+    activate SM
+    SM -> LG: update()
+    activate LG
+    LG -> LL: create(url)
+    activate LL
+    note right of LG: Level loading runs in a background thread.
+    LL -> LG: return level_data
+    deactivate LL
+    LG -> SM: go_to(GameplayScene)
+    deactivate LG
+    SM -> GP: create(level_data)
+    SM --> Game: scene = gameplay
+    deactivate SM
+
+    Game -> SM: update()
+    activate SM
+    SM -> GP: update()
+    activate GP
+    GP -> GP: update sprites, check collisions
+    deactivate GP
+    deactivate SM
+
+    Game -> SM: draw()
+    activate SM
+    SM -> GP: draw(screen)
+    activate GP
+    GP -> Game: render graphics
+    deactivate GP
+    deactivate SM
+end
+
+@enduml

@@ -1,0 +1,63 @@
+
+@startuml
+!theme vibrant
+skinparam linetype ortho
+title Activity Diagram: Game Flow
+
+start
+
+:Launch Game;
+
+partition "Main Menu" {
+    :Display Main Menu;
+    if (User selects "Start Game"?) then (yes)
+        :Display Game Type Selection;
+        if (User selects a game type?) then (yes)
+            :Display Customization Menu;
+            if (User clicks "Play"?) then (yes)
+                :Load Level Data;
+            endif
+        endif
+    else if (User selects "Options"?) then (yes)
+        :Display Options Menu;
+        :Adjust Settings;
+        :Return to Main Menu;
+        stop
+    else if (User selects "Leaderboard"?) then (yes)
+        :Display Leaderboard;
+        :Return to Main Menu;
+        stop
+    else if (User selects "Quit"?) then (yes)
+        :Exit Game;
+        stop
+    endif
+}
+
+partition "Gameplay" {
+    :Enter Gameplay Loop;
+    repeat
+        :Update Game State;
+        :Render Graphics;
+        if (User presses ESC?) then (yes)
+            :Display Pause Menu;
+            if (User selects "Resume"?) then (yes)
+                :Resume Gameplay;
+            else (no)
+                :Return to Main Menu;
+                stop
+            endif
+        endif
+    repeat while (Level not complete AND Time > 0) is (true)
+    
+    if (Level Complete?) then (yes)
+        :Show Level Complete Screen;
+    else (no)
+        :Show Game Over Screen;
+    endif
+    
+    :Return to Main Menu;
+}
+
+stop
+
+@enduml

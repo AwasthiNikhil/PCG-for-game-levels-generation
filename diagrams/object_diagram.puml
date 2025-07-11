@@ -1,0 +1,43 @@
+
+@startuml
+!theme vibrant
+title Object Diagram: Gameplay Scenario
+
+object "mainGame:Game" as game
+object "sceneMgr:SceneManager" as sm
+object "audioMgr:AudioManager" as am
+object "settingsMgr:SettingsManager" as stm
+
+game --> sm : "manages"
+game --> am : "uses"
+game --> stm : "uses"
+
+package "Active Gameplay State" {
+  object "gameplay:GameplayScene" as gp
+  sm --> gp : "current_scene"
+
+  object "player:Player" as p {
+    state = "has_key = false"
+    state = "on_floor = true"
+  }
+  object "door:ExitDoor" as d
+  object "key:Key" as k
+  object "wall:CollisionSprite" as w
+  object "countdown:Timer" as t {
+    state = "active = true"
+  }
+  object "bomb:Bomb" as b
+}
+
+gp --> p : "contains"
+gp --> d : "contains"
+gp --> k : "contains"
+gp --> w : "contains"
+gp --> t : "manages"
+gp ..> b : "creates"
+
+p --> stm : "reads controls"
+p ..> gp : "requests new level"
+am <-- gp : "plays sounds"
+
+@enduml
