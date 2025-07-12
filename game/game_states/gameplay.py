@@ -5,7 +5,7 @@ from core.base_scene import BaseScene
 from settings import BLACK, BLOCK_SIZE, BLOCKS, WIDTH, HEIGHT
 from utils.heplers import import_image, import_folder
 from game_states.pause import PauseScene  
-from utils.sprites import Sprite, CollisionSprite, ExitDoor, Key, Player, Bomb
+from utils.sprites import Sprite, CollisionSprite, ExitDoor, Key, Player, Bomb, Coin
 from utils.groups import AllSprites
 from utils.timer import Timer
 from random import choice, choices
@@ -42,8 +42,8 @@ class GameplayScene(BaseScene):
     def load_assets(self):
         self.player_frames = import_folder('images','player')
         self.bomb_frames = import_folder('images','throwable', 'bomb')
-        # print(self.bomb_frames)
-    
+        self.coin_image = import_image('images','collectibles','coin')
+
     def interpolate_color(self, start_color, end_color, factor):
         r = int(start_color[0] * (1 - factor) + end_color[0] * factor)
         g = int(start_color[1] * (1 - factor) + end_color[1] * factor)
@@ -154,7 +154,11 @@ class GameplayScene(BaseScene):
         self.exit_position = self.get_exit_spawnable_position()
         self.item_position = self.get_item_spawnable_position()
         self.player_position = self.get_player_spawnable_position()
-
+        self.coin_positions = self.get_coin_spawnable_position()
+        
+        for pos in self.coin_positions:
+            Coin(pos, (self.all_sprites, self.collectible_sprite), self.coin_image)        
+        
         self.exit_door = ExitDoor(self.exit_position, (self.all_sprites, self.exit_sprite))
         self.exit_key = Key(self.item_position, (self.all_sprites, self.collectible_sprite))
         self.player = Player(
@@ -212,6 +216,20 @@ class GameplayScene(BaseScene):
             # Create a list of weights (for simplicity, all weights are equal)
             weights = [1] * len(potential_positions)
             return choices(potential_positions, weights=weights, k=1)[0]  # Select one position based on weights
+        return None  # Return None if no spawnable position was found
+    
+    def get_coin_spawnable_position(self):
+        potential_positions = []
+        for y in range(len(self.level_data)): 
+            for x in range(len(self.level_data[y])):
+                if self.level_data[y][x] == 1:  # Check if the cell is a floor
+                    # Store the position of the cell
+                    potential_positions.append((x * BLOCK_SIZE, y * BLOCK_SIZE))
+        
+        if potential_positions:
+            # Create a list of weights (for simplicity, all weights are equal)
+            weights = [1] * len(potential_positions)
+            return choices(potential_positions, weights=weights, k=10) # Select one position based on weights
         return None  # Return None if no spawnable position was found
     
     def handle_events(self, events):
