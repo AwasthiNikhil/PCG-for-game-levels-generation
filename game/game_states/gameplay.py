@@ -18,12 +18,15 @@ class GameplayScene(BaseScene):
         self.level_data = level_data
         self.load_assets()
         
+        
+        
         # groups
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
         self.bomb_sprites = pygame.sprite.Group()    
         self.exit_sprite = pygame.sprite.Group()        
-        self.collectible_sprite = pygame.sprite.Group()    
+        self.collectible_sprite = pygame.sprite.Group() 
+        self.coin_sprite = pygame.sprite.Group() 
         
         self.draw_level()
     
@@ -38,6 +41,12 @@ class GameplayScene(BaseScene):
         self.timer_surface_rect = self.timer_surface.get_rect(midtop=(WIDTH/2, 10))
         self.game_over_surface = pygame.Surface((WIDTH,HEIGHT), pygame.SRCALPHA)
         self.game_over_surface_rect = self.game_over_surface.get_rect(center=(WIDTH/2, HEIGHT/2))
+        
+        self.in_play_coin_count = pygame.Surface((100,50), pygame.SRCALPHA)
+        self.in_play_coin_rect = self.in_play_coin_count.get_rect(topleft=(10, 10))
+        
+        self.coin_image_scaled_down = pygame.transform.scale(self.coin_image, (int(self.coin_image.get_width() * 0.5), int(self.coin_image.get_height() * 0.5)))
+        
     
     def load_assets(self):
         self.player_frames = import_folder('images','player')
@@ -93,6 +102,21 @@ class GameplayScene(BaseScene):
             text_rect = text_surface.get_rect(center=self.timer_surface.get_rect().center)
             self.timer_surface.blit(text_surface, text_rect.topleft)
     
+    def recalculate_coins(self):
+        self.in_play_coin_count.fill((0, 0, 0, 0))  
+        pygame.draw.rect(
+            surface=self.in_play_coin_count,
+            color=(255, 255, 255, 50),  
+            rect=(0, 0, self.in_play_coin_count.get_width(), self.in_play_coin_count.get_height()), 
+            border_radius=10
+        )
+        
+
+        text_surface = self.gui_font.render(str(self.game.in_play_coin_count), True, (0, 0, 0))  
+        text_rect = text_surface.get_rect(center=self.in_play_coin_count.get_rect().center)
+        self.in_play_coin_count.blit(text_surface, text_rect.topleft)
+        
+    
     def game_over_func(self, screen):
         if not self.remaining_time:
             pygame.draw.rect(
@@ -129,7 +153,6 @@ class GameplayScene(BaseScene):
         x = pos[0] + direction * 34 if direction == 1 else pos[0] + direction * 34 - self.bomb_frames[0].get_width() 
         Bomb(self.bomb_frames, (x, pos[1]), direction, (self.all_sprites, self.bomb_sprites), self.collision_sprites)
    
-    
     def draw_level(self):
         for y, row in enumerate(self.level_data):
             for x, block in enumerate(row):
@@ -157,7 +180,7 @@ class GameplayScene(BaseScene):
         self.coin_positions = self.get_coin_spawnable_position()
         
         for pos in self.coin_positions:
-            Coin(pos, (self.all_sprites, self.collectible_sprite), self.coin_image)        
+            Coin(pos, (self.all_sprites, self.coin_sprite), self.coin_image)        
         
         self.exit_door = ExitDoor(self.exit_position, (self.all_sprites, self.exit_sprite))
         self.exit_key = Key(self.item_position, (self.all_sprites, self.collectible_sprite))
@@ -167,10 +190,11 @@ class GameplayScene(BaseScene):
             self.collision_sprites, 
             self.exit_sprite, 
             self.collectible_sprite, 
+            self.coin_sprite,
             self.player_frames, 
             self.create_bomb,
             self.game,
-            self.get_new_level
+            self.get_new_level,
         )   
 
     def get_new_level(self):
@@ -179,6 +203,7 @@ class GameplayScene(BaseScene):
         self.collision_sprites.empty()
         self.exit_sprite.empty()
         self.collectible_sprite.empty()
+        self.coin_sprite.empty()
         from game_states.loadgame import LoadGame
         self.game.scene_manager.go_to(LoadGame(self.game, self.game.level_url))
         
@@ -253,10 +278,15 @@ class GameplayScene(BaseScene):
         self.all_sprites.draw(self.player.rect.center)
         self.log_gui()
         self.countdown()
+        self.recalculate_coins()
         self.game_over_func(screen)
         
         screen.blit(self.gui_logger,  self.gui_logger.get_rect(topright=(WIDTH - 10, 10)))
         screen.blit(self.timer_surface, self.timer_surface_rect)
+        
+        screen.blit(self.in_play_coin_count, self.in_play_coin_rect)
+        
+        
         
         
         

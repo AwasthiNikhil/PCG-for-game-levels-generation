@@ -27,14 +27,14 @@ class AnimatedSprite(Sprite):
         self.image = self.frames[int(self.frame_index) % len(self.frames)]
 
 class Player(AnimatedSprite):
-    def __init__(self, pos, groups, collision_sprites, exit_sprite, collectible_sprite, frames, create_bomb, game, get_new_level=None):
+    def __init__(self, pos, groups, collision_sprites, exit_sprite, collectible_sprite, coin_sprite, frames, create_bomb, game, get_new_level=None):
 
         super().__init__(frames, pos, groups)
         self.type = 'object'
         self.create_bomb = create_bomb
         self.flip = False
-        self.game = game
-        self.groups = groups
+        self.game= game
+        
         
         self.get_new_level = get_new_level
         
@@ -43,17 +43,15 @@ class Player(AnimatedSprite):
         self.collision_sprites = collision_sprites
         self.exit_sprite = exit_sprite
         self.collectible_sprite = collectible_sprite
+        self.coin_sprite = coin_sprite
         self.speed = 600
         self.gravity = 10
         self.on_floor = False
         self.has_key = False        
         self.bomb_shoot_timer = Timer(500)
 
-    
     def input(self):
         keys = pygame.key.get_pressed()
-        # self.direction.x = int(keys[pygame.K_d]) - int(keys[pygame.K_a])
-        # if keys[pygame.K_w] and self.on_floor:
         controls = self.game.settings['CONTROLS'] 
         move_left_key = controls.get('MOVE_LEFT', pygame.K_a)
         move_right_key = controls.get('MOVE_RIGHT', pygame.K_d)
@@ -62,13 +60,12 @@ class Player(AnimatedSprite):
         self.direction.x = int(keys[move_right_key]) - int(keys[move_left_key])
         if keys[jump_key] and self.on_floor:
             self.direction.y = -12
-        # if keys[pygame.K_SPACE] and not self.bomb_shoot_timer:
         if keys[shoot_key] and not self.bomb_shoot_timer: 
             self.create_bomb(self.rect.center, -1 if self.flip else 1)
             self.bomb_shoot_timer.activate()
         
     def move(self, dt):
-        # horizontak
+        # horizontal
         self.rect.x += self.direction.x * self.speed * dt
         self.collision('horizontal')
         
@@ -114,6 +111,11 @@ class Player(AnimatedSprite):
             if sprite.rect.colliderect(self.rect):
                 self.has_key = True
                 print('collected key :)')
+                sprite.kill()
+        for sprite in self.coin_sprite:
+            if sprite.rect.colliderect(self.rect):
+                self.game.in_play_coin_count = self.game.in_play_coin_count + 1
+                print(self.game.in_play_coin_count)
                 sprite.kill()
     
     def check_finish(self):

@@ -38,6 +38,8 @@ class Game:
         self.player_speed = 200
         self.jump_height = 200
         
+        self.in_play_coin_count = 0
+        
         self.scene_manager = SceneManager(MenuScene(self))
 
     def run(self):
