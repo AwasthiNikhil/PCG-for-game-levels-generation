@@ -111,7 +111,6 @@ class GameplayScene(BaseScene):
             border_radius=10
         )
         
-
         text_surface = self.gui_font.render(str(self.game.in_play_coin_count), True, (0, 0, 0))  
         text_rect = text_surface.get_rect(center=self.in_play_coin_count.get_rect().center)
         self.in_play_coin_count.blit(text_surface, text_rect.topleft)
