@@ -77,8 +77,20 @@ class OptionsScene(BaseScene):
     def player_stats(self, screen):
         pygame.draw.line(screen, (0, 0, 0), (WIDTH / 4, 250), (WIDTH* 4/5, 250), 2)
         
+    def dev_mode(self, screen):
+        self.dev_button = pygame.draw.rect(screen, (0, 0, 0), (WIDTH - 400, 270, 150, 50), 2)
+        pygame.draw.rect(screen, (0, 0, 0), (WIDTH - 395, 275, 40, 40), 2)
+        
+        text = self.font.render('Dev', True, (0, 0, 0))
+        screen.blit(text, (WIDTH - 340, 280))
+        
+        self.info_button = pygame.draw.circle(screen, (0, 0, 0), (WIDTH - 275, 295), 15, 2)
+        question = self.font.render('?', True, (0, 0, 0))
+        screen.blit(question, (WIDTH - 280, 280))
+        
     def draw_player_tab(self, screen):
         self.player_info(screen)
+        self.dev_mode(screen)
         self.player_stats(screen)
 
     def handle_events(self, events):

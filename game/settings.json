@@ -1,7 +1,7 @@
 {
     "FULLSCREEN": false,
     "MASTER_VOL": 1.0,
-    "MUSIC_VOL": 1.0,
+    "MUSIC_VOL": 0.14,
     "SFX_VOL": 0.48,
     "CONTROLS": {
         "MOVE_LEFT": 1073741904,
