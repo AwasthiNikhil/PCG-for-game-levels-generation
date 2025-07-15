@@ -54,7 +54,11 @@ class OptionsScene(BaseScene):
             ControlBinding(action, control, game, pos, self.font)
             for action, control, game, pos in self.control_bindings_config
         ]
-
+        
+        self.profile_icon = pygame.image.load("assets/images/profile_icon/0.png")
+        self.player_name = "Bisesh"
+        self.customize_button = pygame.image.load("assets/images/icons/0.png")
+        
         self.back_button = Button("Back", (WIDTH / 2 - 100, 480), (150, 50), self.go_back, self.font)
 
     def set_tab(self, tab_name):
@@ -64,6 +68,19 @@ class OptionsScene(BaseScene):
         from game_states.menu import MenuScene
         self.game.scene_manager.go_to(MenuScene(self.game))
 
+    def player_info(self, screen):
+        screen.blit(self.profile_icon, (WIDTH/4, 150))
+        name_text = self.font.render(self.player_name, True, (0, 0, 0))
+        screen.blit(name_text, (WIDTH / 2 - WIDTH/4 + 100, 170))
+        screen.blit(self.customize_button, (WIDTH - WIDTH/4, 150))
+        
+    def player_stats(self, screen):
+        pygame.draw.line(screen, (0, 0, 0), (WIDTH / 4, 250), (WIDTH* 4/5, 250), 2)
+        
+    def draw_player_tab(self, screen):
+        self.player_info(screen)
+        self.player_stats(screen)
+
     def handle_events(self, events):
         for event in events:
             # Handle tab button events
@@ -72,8 +89,10 @@ class OptionsScene(BaseScene):
 
             # Handle the active tab-specific events
             if self.active_tab == 'Player':
-                # TODO: Handle player-specific options here if needed
-                pass
+                if self.customize_button.get_rect(topleft=(WIDTH - WIDTH/4, 150)).collidepoint(pygame.mouse.get_pos()):
+                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                        print("Customize button clicked")
+                        
             elif self.active_tab == "Sound":
                 for slider in self.sound_sliders:
                     slider.handle_event(event)
@@ -95,7 +114,7 @@ class OptionsScene(BaseScene):
 
         # Draw the active tab's content
         if self.active_tab == "Player":
-            pass
+            self.draw_player_tab(screen)
         elif self.active_tab == "Sound":
             for slider in self.sound_sliders:
                 slider.draw(screen)
