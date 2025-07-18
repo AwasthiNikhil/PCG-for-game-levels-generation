@@ -6,6 +6,8 @@ from settings import WIDTH, HEIGHT
 from utils.soundslider import SoundSlider
 from utils.toggle import Toggle
 from utils.controlbinding import ControlBinding
+import random
+import string
 
 class OptionsScene(BaseScene):
     def __init__(self, game):
@@ -22,7 +24,6 @@ class OptionsScene(BaseScene):
         self.tabs = [Button(name, (430 + i * 120, 100), (100, 40), callback, self.font)
                      for i, (name, callback) in enumerate(self.tabs_config.items())]
 
-        
         self.sound_sliders_config = [
             ("Master Volume", 'MASTER_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 180)),
             ("Music Volume", 'MUSIC_VOL', game, 0.0, 1.0, 0.01, (WIDTH / 2 - 100, 240)),
@@ -56,7 +57,9 @@ class OptionsScene(BaseScene):
         ]
         
         self.profile_icon = pygame.image.load("assets/images/profile_icon/0.png")
-        self.player_name = "Bisesh"
+        # self.player_name = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase, k=5))
+        self.player_name = self.game.settings['PLAYERNAME']
+
         self.customize_button = pygame.image.load("assets/images/icons/0.png")
         
         self.back_button = Button("Back", (WIDTH / 2 - 100, 480), (150, 50), self.go_back, self.font)

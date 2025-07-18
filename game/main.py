@@ -1,11 +1,13 @@
 # main.py
-
 import pygame
 from settings import WIDTH, HEIGHT, FPS, TITLE
 from core.scene_manager import SceneManager
 from game_states.menu import MenuScene
+from game_states.register import RegisterScene
 from utils.settings_manager import SettingsManager
 from core.audio_manager import AudioManager
+import random
+import string
 
 class Game:
     def __init__(self):
@@ -24,6 +26,7 @@ class Game:
         self.audio_manager.play_music("bgm1.ogg")
         self.settings = {
             'FULLSCREEN': self.settings_manager.get_setting('FULLSCREEN', False),
+            'PLAYERNAME': self.settings_manager.get_setting('PLAYERNAME',''),
             'MASTER_VOL': self.settings_manager.get_setting('MASTER_VOL', 1.0),
             'MUSIC_VOL': self.settings_manager.get_setting('MUSIC_VOL', 0.7),
             'SFX_VOL': self.settings_manager.get_setting('SFX_VOL', 0.7),
@@ -40,7 +43,10 @@ class Game:
         
         self.in_play_coin_count = 0
         
-        self.scene_manager = SceneManager(MenuScene(self))
+        if self.settings['PLAYERNAME'] != '':
+            self.scene_manager = SceneManager(MenuScene(self))
+        else:
+            self.scene_manager = SceneManager(RegisterScene(self))
 
     def run(self):
         running = True
