@@ -90,29 +90,3 @@ class NetworkManager:
             else:
                 return False, "Incorrect password"
 
-# Usage example:
-if __name__ == "__main__":
-    db_config = {
-        'dbname': 'game',
-        'user': 'your_username',
-        'password': 'password',
-        'host': 'localhost',
-        'port': '5432'
-    }
-
-    # Instantiate the NetworkManager
-    network_manager = NetworkManager(db_config)
-
-    # CRUD Operations
-    network_manager.create_user("testuser", "testpassword")  # Create a new user
-    user = network_manager.get_user("testuser")  # Fetch a user
-    print(user)
-    
-    network_manager.update_user("testuser", "newpassword")  # Update password
-    user = network_manager.get_user("testuser")
-    print(user)
-    
-    network_manager.delete_user("testuser")  # Delete user
-    
-    # Close the connection
-    network_manager.close()

@@ -19,7 +19,7 @@ class Game:
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
         self.paused = False
-        
+                        
         self.player_speed = 200
         self.jump_height = 200
 
@@ -51,6 +51,8 @@ class Game:
         self.jump_height = 200
         
         self.in_play_coin_count = 0
+        
+        self.mode = 'normal'
         
         if self.settings['PLAYERNAME'] != '':
             self.scene_manager = SceneManager(MenuScene(self))

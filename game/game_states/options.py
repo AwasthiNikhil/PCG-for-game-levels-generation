@@ -78,11 +78,16 @@ class OptionsScene(BaseScene):
         screen.blit(self.customize_button, (WIDTH - WIDTH/4, 150))
         
     def player_stats(self, screen):
+        # player stats to be shown here
         pygame.draw.line(screen, (0, 0, 0), (WIDTH / 4, 250), (WIDTH* 4/5, 250), 2)
         
     def dev_mode(self, screen):
         self.dev_button = pygame.draw.rect(screen, (0, 0, 0), (WIDTH - 400, 270, 150, 50), 2)
         pygame.draw.rect(screen, (0, 0, 0), (WIDTH - 395, 275, 40, 40), 2)
+        
+        if self.game.mode == 'dev':
+            tick = self.font.render('✓', True, (0, 0, 0))
+            screen.blit(tick, (WIDTH - 380, 280))
         
         text = self.font.render('Dev', True, (0, 0, 0))
         screen.blit(text, (WIDTH - 340, 280))
@@ -101,19 +106,24 @@ class OptionsScene(BaseScene):
             # Handle tab button events
             for tab in self.tabs:
                 tab.handle_event(event)
-
+            
             # Handle the active tab-specific events
             if self.active_tab == 'Player':
                 if self.customize_button.get_rect(topleft=(WIDTH - WIDTH/4, 150)).collidepoint(pygame.mouse.get_pos()):
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                         print("Customize button clicked")
-                        
+                if self.dev_button.collidepoint(pygame.mouse.get_pos()):
+                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                        self.game.mode = 'player' if self.game.mode =='dev' else 'dev'
+                        print(self.game.mode)
+            
             elif self.active_tab == "Sound":
                 for slider in self.sound_sliders:
                     slider.handle_event(event)
             elif self.active_tab == "Controls":
                 for binding in self.control_bindings:
                     binding.handle_event(event)
+
 
             self.back_button.handle_event(event)
 

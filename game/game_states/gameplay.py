@@ -18,8 +18,6 @@ class GameplayScene(BaseScene):
         self.level_data = level_data
         self.load_assets()
         
-        
-        
         # groups
         self.all_sprites = AllSprites()
         self.collision_sprites = pygame.sprite.Group()
@@ -272,8 +270,6 @@ class GameplayScene(BaseScene):
         self.all_sprites.update(self.game.dt) 
         self.countdown_timer.update()
         
-        
-        
         self.all_sprites.draw(self.player.rect.center)
         self.log_gui()
         self.countdown()
@@ -285,7 +281,7 @@ class GameplayScene(BaseScene):
         
         screen.blit(self.in_play_coin_count, self.in_play_coin_rect)
         
-        
+
         
         
         
