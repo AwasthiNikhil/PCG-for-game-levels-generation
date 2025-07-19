@@ -14,6 +14,8 @@ class OptionsScene(BaseScene):
         super().__init__(game)
         self.font = pygame.font.SysFont("Arial", 24)
         self.active_tab = "Player"
+        self.font2 = pygame.font.SysFont('Times New Roman', 30)
+        
 
         self.tabs_config = {
             "Player": lambda: self.set_tab("Player"),
@@ -86,8 +88,8 @@ class OptionsScene(BaseScene):
         pygame.draw.rect(screen, (0, 0, 0), (WIDTH - 395, 275, 40, 40), 2)
         
         if self.game.mode == 'dev':
-            tick = self.font.render('✓', True, (0, 0, 0))
-            screen.blit(tick, (WIDTH - 380, 280))
+            tick = self.font2.render('O', True, (0, 0, 0))
+            screen.blit(tick, (WIDTH - 385, 280))
         
         text = self.font.render('Dev', True, (0, 0, 0))
         screen.blit(text, (WIDTH - 340, 280))
