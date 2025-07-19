@@ -6,6 +6,8 @@ from game_states.menu import MenuScene
 from game_states.register import RegisterScene
 from utils.settings_manager import SettingsManager
 from core.audio_manager import AudioManager
+from core.network_manager import NetworkManager
+
 import random
 import string
 
@@ -37,6 +39,13 @@ class Game:
                 'SHOOT': pygame.K_z
             })
         }
+        self.network_manager = NetworkManager({
+            'dbname': 'game',
+            'user': 'game_user',
+            'password': 'password',
+            'host': 'localhost',
+            'port': '5432'
+        })
         self.settings_manager.save_settings(self.settings)  
         self.player_speed = 200
         self.jump_height = 200

@@ -11,6 +11,7 @@ WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 BLUE = (50, 150, 255)
 GRAY = (200, 200, 200)
+RED = (200,0,0)
 BLOCK_SIZE = 128
 BLOCKS = {
     1: {'color':choice(['light green','antiquewhite', 'brown4', 'cadetblue3']), 'name':'floor'},
