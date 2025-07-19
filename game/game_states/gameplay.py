@@ -113,7 +113,6 @@ class GameplayScene(BaseScene):
         text_rect = text_surface.get_rect(center=self.in_play_coin_count.get_rect().center)
         self.in_play_coin_count.blit(text_surface, text_rect.topleft)
         
-    
     def game_over_func(self, screen):
         if not self.remaining_time:
             pygame.draw.rect(
@@ -280,9 +279,4 @@ class GameplayScene(BaseScene):
         screen.blit(self.timer_surface, self.timer_surface_rect)
         
         screen.blit(self.in_play_coin_count, self.in_play_coin_rect)
-        
-
-        
-        
-        
         

@@ -4,9 +4,6 @@ import pygame
 from core.base_scene import BaseScene
 from utils.button import Button
 from settings import WIDTH, HEIGHT, BLUE
-# from game_states.gameplay import GameplayScene
-from game_states.gametype import SelectGameTypeScene
-from game_states.usergameplay import UserGameplayScene
 from game_states.options import OptionsScene
 from game_states.leaderboard import Leaderboard
 from game_states.shop import ShopScene
@@ -40,16 +37,16 @@ class MenuScene(BaseScene):
             self.buttons.append(Button(label, (x_pos, y_pos), (button_width, button_height), callback, self.font))
         
     def start_game(self):
-        # self.game.scene_manager.go_to(GameplayScene(self.game))
         if self.game.mode == 'god':
+            from game_states.gametype import SelectGameTypeScene
             self.game.scene_manager.go_to(SelectGameTypeScene(self.game))
-            print('god')
         elif self.game.mode == 'mortal':
-            self.game.scene_manager.go_to(UserGameplayScene(self.game))
-            print('mortal')
+            from game_states.userloadgame import UserLoadGame
+            self.game.scene_manager.go_to(UserLoadGame(self.game))
+        else:
+            print("menu.py: no mode selected (mortal/god)")
     
     def open_leaderboard(self):
-        # self.game.scene_manager.go_to(GameplayScene(self.game))
         self.game.scene_manager.go_to(Leaderboard(self.game))
 
     def open_options(self):
