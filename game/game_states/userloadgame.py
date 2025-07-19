@@ -11,12 +11,12 @@ class UserLoadGame(BaseScene):
     def __init__(self, game, level_url=None):
         super().__init__(game)
         self.game = game
+        self.method_type = Rules().get_generator_for_level(75)
         if not level_url:
             self.game.level_url = self.build_initial_url()
         else:
             self.game.level_url = level_url
         self.loading = True
-        self.method_type = Rules().get_generator_for_level(1)
         
         self.font = pygame.font.SysFont("Arial", 24)
         self.spinner_angle = 0
@@ -62,10 +62,8 @@ class UserLoadGame(BaseScene):
         thread.start()
 
     def build_initial_url(self):
-        
-        
         url = (
-            f'http://127.0.0.1:5000/generate/1'
+            f'http://127.0.0.1:5000/generate/{self.method_type}'
             f'?x=15'
             f'&y=15'
             f'&seed=123'
@@ -81,21 +79,7 @@ class UserLoadGame(BaseScene):
         return url
 
     def load_level_data(self):
-        
-        url = (
-            f'http://127.0.0.1:5000/generate/1'
-            f'?x=15'
-            f'&y=15'
-            f'&seed=123'
-            f'&scale=0'
-            f'&min_leaf_size=2'
-            f'&max_leaf_size=5'
-            f'&wall_probability=50'
-            f'&threshold=1'
-            f'&min_room_size=2'
-            f'&max_rooms=5'
-            f'&iterations=3'
-        )
+        url = self.game.level_url
         try:
             level_data = LevelLoader(url).get_grid()
             self.level_data = level_data
