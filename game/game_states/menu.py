@@ -6,6 +6,7 @@ from utils.button import Button
 from settings import WIDTH, HEIGHT, BLUE
 # from game_states.gameplay import GameplayScene
 from game_states.gametype import SelectGameTypeScene
+from game_states.usergameplay import UserGameplayScene
 from game_states.options import OptionsScene
 from game_states.leaderboard import Leaderboard
 from game_states.shop import ShopScene
@@ -40,8 +41,13 @@ class MenuScene(BaseScene):
         
     def start_game(self):
         # self.game.scene_manager.go_to(GameplayScene(self.game))
-        self.game.scene_manager.go_to(SelectGameTypeScene(self.game))
-        
+        if self.game.mode == 'god':
+            self.game.scene_manager.go_to(SelectGameTypeScene(self.game))
+            print('god')
+        elif self.game.mode == 'mortal':
+            self.game.scene_manager.go_to(UserGameplayScene(self.game))
+            print('mortal')
+    
     def open_leaderboard(self):
         # self.game.scene_manager.go_to(GameplayScene(self.game))
         self.game.scene_manager.go_to(Leaderboard(self.game))

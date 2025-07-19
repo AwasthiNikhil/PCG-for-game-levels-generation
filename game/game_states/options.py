@@ -87,7 +87,7 @@ class OptionsScene(BaseScene):
         self.dev_button = pygame.draw.rect(screen, (0, 0, 0), (WIDTH - 400, 270, 150, 50), 2)
         pygame.draw.rect(screen, (0, 0, 0), (WIDTH - 395, 275, 40, 40), 2)
         
-        if self.game.mode == 'dev':
+        if self.game.mode == 'god':
             tick = self.font2.render('O', True, (0, 0, 0))
             screen.blit(tick, (WIDTH - 385, 280))
         
@@ -116,9 +116,7 @@ class OptionsScene(BaseScene):
                         print("Customize button clicked")
                 if self.dev_button.collidepoint(pygame.mouse.get_pos()):
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                        self.game.mode = 'player' if self.game.mode =='dev' else 'dev'
-                        print(self.game.mode)
-            
+                        self.game.mode = 'mortal' if self.game.mode =='god' else 'god'
             elif self.active_tab == "Sound":
                 for slider in self.sound_sliders:
                     slider.handle_event(event)

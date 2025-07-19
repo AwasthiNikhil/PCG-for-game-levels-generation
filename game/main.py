@@ -29,6 +29,7 @@ class Game:
         self.settings = {
             'FULLSCREEN': self.settings_manager.get_setting('FULLSCREEN', False),
             'PLAYERNAME': self.settings_manager.get_setting('PLAYERNAME',''),
+            'LEVEL':  self.settings_manager.get_setting('LEVEL',1),
             'MASTER_VOL': self.settings_manager.get_setting('MASTER_VOL', 1.0),
             'MUSIC_VOL': self.settings_manager.get_setting('MUSIC_VOL', 0.7),
             'SFX_VOL': self.settings_manager.get_setting('SFX_VOL', 0.7),
@@ -52,7 +53,7 @@ class Game:
         
         self.in_play_coin_count = 0
         
-        self.mode = 'normal'
+        self.mode = 'mortal'
         
         if self.settings['PLAYERNAME'] != '':
             self.scene_manager = SceneManager(MenuScene(self))
