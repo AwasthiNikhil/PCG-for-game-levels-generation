@@ -1,6 +1,6 @@
 {
     "FULLSCREEN": false,
-    "PLAYERNAME": "user2",
+    "PLAYERNAME": "user1",
     "LEVEL": 1,
     "MASTER_VOL": 0.03,
     "MUSIC_VOL": 0.48,
@@ -10,5 +10,6 @@
         "MOVE_RIGHT": 100,
         "JUMP": 119,
         "SHOOT": 32
-    }
+    },
+    "USERID": 1
 }

@@ -11,7 +11,8 @@ class UserLoadGame(BaseScene):
     def __init__(self, game, level_url=None):
         super().__init__(game)
         self.game = game
-        self.method_type = Rules().get_generator_for_level(75)
+        
+        self.method_type = Rules().get_generator_for_level(self.game.settings['USERID'])
         if not level_url:
             self.game.level_url = self.build_initial_url()
         else:

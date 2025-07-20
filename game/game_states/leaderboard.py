@@ -14,7 +14,7 @@ class Leaderboard(BaseScene):
         self.back_button = Button("Back", (WIDTH / 2 - 100, HEIGHT - 50), (80, 40), self.go_back, self.font)        
         self.buttons.append(self.back_button)
 
-        # Static leaderboard data (will later be fetched from a database or file)
+        # Static leaderboard data (will later be fetched from a database)
         self.leaderboard_data = [
             {'rank': 1, 'name': "PlayerOne", 'level_type': "Random", 'seed': 12345, 'date': '2023-06-25', 'score': 1200},
             {'rank': 2, 'name': "PlayerTwo", 'level_type': "BSP", 'seed': 67890, 'date': '2023-06-26', 'score': 1100},

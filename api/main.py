@@ -1,4 +1,4 @@
-from flask import Flask, request, Response
+from flask import Flask, request, Response, jsonify
 from io import StringIO
 import sys
 
@@ -90,6 +90,24 @@ def generate_level(level_type):
     print(f"Seed {seed} ")
     
     return Response(mystdout.getvalue(), mimetype='text/plain')
+
+@app.route('/level/<int:user>',methods=['GET'])
+def get_user_level(user):
+    from database.NetworkManager import NetworkManager
+    db = NetworkManager()
+    query = 'SELECT level, completed FROM public.player_levels WHERE user_id = %s'
+    user_level = db.fetch_all(query, (user,))
+    db.close()
+    return jsonify(min([level for level, completed in user_level if not completed]))
+
+@app.route('/login',methods=['GET'])
+def login_or_register():
+    
+    request.args.get('username'),request.args.get('password')
+    
+    return jsonify('1')
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)

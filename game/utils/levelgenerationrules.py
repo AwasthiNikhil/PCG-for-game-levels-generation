@@ -25,6 +25,8 @@ class Rules:
             if level in rule['range']:
                 return rule['method']
         return '6'
+    def get_seed_for_level(level):
+        return hash(f"level_{level}_mygame") % (2**32)
     
  
         

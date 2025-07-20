@@ -54,7 +54,7 @@ class RegisterScene(BaseScene):
 
             if success:
                 user = result
-                print(f"User {user[1]} logged in or registered.")
+                self.game.settings['USERID'] = user[0]
                 self.game.settings['PLAYERNAME'] = user[1]
                 self.game.settings_manager.save_settings(self.game.settings)
 
