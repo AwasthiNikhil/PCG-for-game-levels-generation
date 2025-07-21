@@ -50,10 +50,7 @@ class RegisterScene(BaseScene):
         try:
             from utils.database import Database
             success, result = Database().login_or_register(self.username_input.strip(), self.password_input.strip())
-            # success, result = self.game.network_manager.login_or_register_user(
-            #     self.username_input.strip(), self.password_input.strip()
-            # )
-            
+                        
             if success:
                 user = result
                 self.game.settings['USERID'] = user[0]

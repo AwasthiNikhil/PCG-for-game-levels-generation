@@ -1,9 +1,5 @@
 import psycopg2
 import logging
-
-import psycopg2
-import logging
-
 class NetworkManager:
     def __init__(self, db_config):
         """
@@ -65,28 +61,4 @@ class NetworkManager:
         query = "SELECT * FROM users WHERE username = %s"
         return self.fetch_one(query, (username,))
 
-    def create_user(self, username, password):
-        """Create a new user in the database."""
-        query = "INSERT INTO users (username, password) VALUES (%s, %s)"
-        self.execute_query(query, (username, password))
-
-    def login_or_register_user(self, username, password):
-        """
-        Try to login or register a user:
-        - If user doesn't exist, create it.
-        - If user exists, check password.
-        Returns: (success: bool, user_row or error message)
-        """
-        user = self.get_user(username)
-        if user is None:
-            # User doesn't exist, register
-            self.create_user(username, password)
-            user = self.get_user(username)
-            return True, user
-        else:
-            # User exists, verify password
-            if user[2] == password:  # Assuming user schema: id, username, password
-                return True, user
-            else:
-                return False, "Incorrect password"
 

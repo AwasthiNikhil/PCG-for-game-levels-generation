@@ -104,10 +104,9 @@ def login_or_register():
     username = request.args.get('username')
     password = request.args.get('password')
     db = NetworkManager()    
-    response = db.login_or_register_user(username, password)
+    success, user = db.login_or_register_user(username, password)
     db.close()
-    return jsonify(response)
-
+    return jsonify({'success': success, 'result': user})
 
 if __name__ == '__main__':
     app.run(debug=True)
