@@ -27,9 +27,8 @@ class Game:
         self.audio_manager = AudioManager(self.settings_manager)
         self.audio_manager.play_music("bgm1.ogg")
         self.settings = {
-            'FULLSCREEN': self.settings_manager.get_setting('FULLSCREEN', False),
-            'PLAYERNAME': self.settings_manager.get_setting('PLAYERNAME',''),
             'USERID': self.settings_manager.get_setting('USERID',''),
+            'PLAYERNAME': self.settings_manager.get_setting('PLAYERNAME',''),
             'LEVEL':  self.settings_manager.get_setting('LEVEL',1),
             'MASTER_VOL': self.settings_manager.get_setting('MASTER_VOL', 1.0),
             'MUSIC_VOL': self.settings_manager.get_setting('MUSIC_VOL', 0.7),
@@ -37,17 +36,11 @@ class Game:
             'CONTROLS': self.settings_manager.get_setting('CONTROLS', {
                 'MOVE_LEFT': pygame.K_LEFT,
                 'MOVE_RIGHT': pygame.K_RIGHT,
-                'JUMP': pygame.K_SPACE, 
-                'SHOOT': pygame.K_z
+                'JUMP': pygame.K_UP, 
+                'SHOOT': pygame.K_SPACE
             })
         }
-        self.network_manager = NetworkManager({
-            'dbname': 'game',
-            'user': 'game_user',
-            'password': 'password',
-            'host': 'localhost',
-            'port': '5432'
-        })
+
         self.settings_manager.save_settings(self.settings)  
         self.player_speed = 200
         self.jump_height = 200

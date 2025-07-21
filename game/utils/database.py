@@ -1,8 +1,5 @@
 import requests
 
-
-
-
 class Database:
     def __init__(self):
         self.login_url = (
@@ -18,7 +15,7 @@ class Database:
             return data['success'], data['result']
         except Exception as e:
             print("Error, check utils/database.py")
-        
+    
         
         
         

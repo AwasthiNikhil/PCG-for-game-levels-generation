@@ -37,7 +37,6 @@ class OptionsScene(BaseScene):
             for label, setting_key, game, min_val, max_val, step, pos in self.sound_sliders_config
         ]
 
-
         if not self.game.settings_manager.get_setting('CONTROLS'): 
             self.game.settings_manager.set_setting('CONTROLS', {   
                 'MOVE_LEFT': pygame.K_LEFT,
@@ -59,10 +58,10 @@ class OptionsScene(BaseScene):
         ]
         
         self.profile_icon = pygame.image.load("assets/images/profile_icon/0.png")
-        # self.player_name = ''.join(random.choices(string.ascii_uppercase + string.ascii_lowercase, k=5))
         self.player_name = self.game.settings['PLAYERNAME']
-
         self.customize_button = pygame.image.load("assets/images/icons/0.png")
+        self.logout_button = pygame.image.load("assets/images/icons/1.png")
+        
         
         self.back_button = Button("Back", (WIDTH / 2 - 100, 480), (150, 50), self.go_back, self.font)
 
@@ -78,6 +77,8 @@ class OptionsScene(BaseScene):
         name_text = self.font.render(self.player_name, True, (0, 0, 0))
         screen.blit(name_text, (WIDTH / 2 - WIDTH/4 + 100, 170))
         screen.blit(self.customize_button, (WIDTH - WIDTH/4, 150))
+        screen.blit(self.logout_button, (WIDTH - WIDTH/4, 472))
+        
         
     def player_stats(self, screen):
         # player stats to be shown here
@@ -114,6 +115,12 @@ class OptionsScene(BaseScene):
                 if self.customize_button.get_rect(topleft=(WIDTH - WIDTH/4, 150)).collidepoint(pygame.mouse.get_pos()):
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                         print("Customize button clicked")
+                if self.logout_button.get_rect(topleft=(WIDTH - WIDTH/4, 472)).collidepoint(pygame.mouse.get_pos()):
+                    if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                        self.game.settings['PLAYERNAME'] = self.game.settings['USERID'] = ''
+                        self.game.settings_manager.save_settings(self.game.settings)
+                        from game_states.register import RegisterScene
+                        self.game.scene_manager.go_to(RegisterScene(self.game))
                 if self.dev_button.collidepoint(pygame.mouse.get_pos()):
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
                         self.game.mode = 'mortal' if self.game.mode =='god' else 'god'
