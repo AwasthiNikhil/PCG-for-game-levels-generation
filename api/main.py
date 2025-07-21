@@ -1,7 +1,7 @@
 from flask import Flask, request, Response, jsonify
 from io import StringIO
 import sys
-
+from database.NetworkManager import NetworkManager
 from classes.Grid import Grid
 from classes.LevelPostProcessor import LevelPostProcessor
 from classes.random.RandomLevelGenerator import RandomLevelGenerator
@@ -93,7 +93,6 @@ def generate_level(level_type):
 
 @app.route('/level/<int:user>',methods=['GET'])
 def get_user_level(user):
-    from database.NetworkManager import NetworkManager
     db = NetworkManager()
     query = 'SELECT level, completed FROM public.player_levels WHERE user_id = %s'
     user_level = db.fetch_all(query, (user,))
@@ -102,11 +101,12 @@ def get_user_level(user):
 
 @app.route('/login',methods=['GET'])
 def login_or_register():
-    
-    request.args.get('username'),request.args.get('password')
-    
-    return jsonify('1')
-
+    username = request.args.get('username')
+    password = request.args.get('password')
+    db = NetworkManager()    
+    response = db.login_or_register_user(username, password)
+    db.close()
+    return jsonify(response)
 
 
 if __name__ == '__main__':

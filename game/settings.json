@@ -1,8 +1,9 @@
 {
     "FULLSCREEN": false,
     "PLAYERNAME": "user1",
+    "USERID": 1,
     "LEVEL": 1,
-    "MASTER_VOL": 0.03,
+    "MASTER_VOL": 0.06,
     "MUSIC_VOL": 0.48,
     "SFX_VOL": 0.48,
     "CONTROLS": {
@@ -10,6 +11,5 @@
         "MOVE_RIGHT": 100,
         "JUMP": 119,
         "SHOOT": 32
-    },
-    "USERID": 1
+    }
 }

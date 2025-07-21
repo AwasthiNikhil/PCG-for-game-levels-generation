@@ -29,6 +29,7 @@ class Game:
         self.settings = {
             'FULLSCREEN': self.settings_manager.get_setting('FULLSCREEN', False),
             'PLAYERNAME': self.settings_manager.get_setting('PLAYERNAME',''),
+            'USERID': self.settings_manager.get_setting('USERID',''),
             'LEVEL':  self.settings_manager.get_setting('LEVEL',1),
             'MASTER_VOL': self.settings_manager.get_setting('MASTER_VOL', 1.0),
             'MUSIC_VOL': self.settings_manager.get_setting('MUSIC_VOL', 0.7),
