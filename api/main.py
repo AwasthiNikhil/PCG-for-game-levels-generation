@@ -108,5 +108,31 @@ def login_or_register():
     db.close()
     return jsonify({'success': success, 'result': user})
 
+@app.route('/settings',methods=['GET'])
+def get_settings():
+    try:
+        uid = int(request.args.get('uid'))
+        db = NetworkManager()    
+        response = db.get_settings(uid)
+        db.close()
+        return jsonify(response)
+    except Exception as e:
+        print(f"Error retrieving settings: {e}")
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/settings',methods=['POST'])
+def update_settings():
+    try:
+        uid = int(request.args.get('uid'))
+        settings = request.get_json()
+        db = NetworkManager()    
+        response = db.update_settings(uid, settings)
+        db.close()
+        return jsonify({'success': True, 'message': 'Settings updated successfully'})        
+    except Exception as e:
+        print(f"Error retrieving settings: {e}")
+        return jsonify({'error': str(e)}), 500
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    # app.run(debug=True)
+    app.run()

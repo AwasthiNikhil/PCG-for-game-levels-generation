@@ -42,6 +42,7 @@ class Game:
         }
 
         self.settings_manager.save_settings(self.settings)  
+        
         self.player_speed = 200
         self.jump_height = 200
         

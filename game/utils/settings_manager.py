@@ -1,4 +1,5 @@
 import json
+import requests
 import os
 
 class SettingsManager:
@@ -6,7 +7,7 @@ class SettingsManager:
         self.file_path = file_path
         self.settings = self._load_settings()
 
-    def _load_settings(self):
+    def _load_settings(self, userid=None):
         if os.path.exists(self.file_path):
             with open(self.file_path, 'r') as f:
                 return json.load(f)
@@ -15,7 +16,9 @@ class SettingsManager:
     def save_settings(self, settings_data):
         with open(self.file_path, 'w') as f:
             json.dump(settings_data, f, indent=4)
-
+        requests.post(f'http://localhost:5000/settings?uid={settings_data["USERID"]}', json=settings_data)
+        
+        
     def get_setting(self, key, default=None):
         return self.settings.get(key, default)
 

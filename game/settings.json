@@ -1,10 +1,10 @@
 {
-    "USERID": 7,
-    "PLAYERNAME": "user",
-    "LEVEL": 1,
-    "MASTER_VOL": 0.06,
-    "MUSIC_VOL": 0.48,
-    "SFX_VOL": 0.48,
+    "USERID": 21,
+    "PLAYERNAME": "a",
+    "LEVEL": 27,
+    "MASTER_VOL": 1.0,
+    "MUSIC_VOL": 0.7,
+    "SFX_VOL": 0.7,
     "CONTROLS": {
         "MOVE_LEFT": 97,
         "MOVE_RIGHT": 100,

@@ -1,5 +1,6 @@
 import psycopg2
 import logging
+import json
 
 class NetworkManager:
     
@@ -13,7 +14,6 @@ class NetworkManager:
         try:
             self.connection = psycopg2.connect(**self.db_config)
             self.cursor = self.connection.cursor()
-            print('hello from database/playerlevel.py')
         except Exception as e:
             logging.error(f"Database connection error: {e}")
             raise
@@ -23,7 +23,6 @@ class NetworkManager:
             self.cursor.close()
         if self.connection:
             self.connection.close()
-        print("Database connection closed.")
 
     def execute_query(self, query, params=None):
         """Execute a single query (INSERT, UPDATE, DELETE)."""
@@ -51,34 +50,72 @@ class NetworkManager:
         except Exception as e:
             logging.error(f"Error fetching data: {e}")
             return []
-        
     
+    def create_preference(self, uid, uname):
+        settings = {
+                "USERID": str(uid),
+                "PLAYERNAME": str(uname),
+                "LEVEL": 1,
+                "MASTER_VOL": 0.06,
+                "MUSIC_VOL": 0.48,
+                "SFX_VOL": 0.48,
+                "CONTROLS": {
+                    "MOVE_LEFT": 97,
+                    "MOVE_RIGHT": 100,
+                    "JUMP": 119,
+                    "SHOOT": 32
+                    }
+            }
+        self.execute_query("INSERT INTO public.preferences (user_id, settings) VALUES (%s, %s)", (uid, json.dumps(settings),))
+        
+    def create_player_stats(self, uid):
+        self.execute_query("INSERT INTO public.player_stats (user_id) VALUES (%s)", (uid,))
+        
+    def create_player_levels(self, uid):
+        self.execute_query("INSERT INTO public.player_levels (user_id) VALUES (%s)", (uid,))
+        
+    def create_player_coins(self, uid):
+        self.execute_query("INSERT INTO public.player_coins (user_id) VALUES (%s)", (uid,))
+
     def login_or_register_user(self, username, password):
-        """
-        Try to login or register a user:
-        - If user doesn't exist, create it.
-        - If user exists, check password.
-        Returns: (success: bool, user_row or error message)
-        """
         user = self.get_user(username)
         if user is None:
-            # User doesn't exist, register
             self.create_user(username, password)
             user = self.get_user(username)
+            self.create_preference(user[0], user[1])
+            self.create_player_stats(user[0])
+            self.create_player_levels(user[0])
+            self.create_player_coins(user[0])
             return True, user
         else:
-            # User exists, verify password
-            if user[2] == password:  # Assuming user schema: id, username, password
+            if user[2] == password:
                 return True, user
             else:
                 return False, "Incorrect password"
 
+    def get_settings(self, uid):
+        query = "SELECT settings FROM public.preferences WHERE user_id=%s"
+        return self.fetch_one(query, (uid,))
+    
+    def update_settings(self, uid, settings):
+        query = "UPDATE public.preferences SET settings=%s WHERE user_id=%s"
+        return self.execute_query(query, (json.dumps(settings), uid,))
+    
     def get_user(self, username):
-        """Get a user by username."""
         query = "SELECT * FROM users WHERE username = %s"
         return self.fetch_one(query, (username,))
 
     def create_user(self, username, password):
-        """Create a new user in the database."""
         query = "INSERT INTO users (username, password) VALUES (%s, %s)"
         self.execute_query(query, (username, password))
+
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        

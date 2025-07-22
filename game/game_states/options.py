@@ -117,7 +117,7 @@ class OptionsScene(BaseScene):
                         print("Customize button clicked")
                 if self.logout_button.get_rect(topleft=(WIDTH - WIDTH/4, 472)).collidepoint(pygame.mouse.get_pos()):
                     if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
-                        self.game.settings['PLAYERNAME'] = self.game.settings['USERID'] = ''
+                        self.game.settings['PLAYERNAME'] = self.game.settings['USERID'] = self.game.settings['LEVEL']= ''
                         self.game.settings_manager.save_settings(self.game.settings)
                         from game_states.register import RegisterScene
                         self.game.scene_manager.go_to(RegisterScene(self.game))

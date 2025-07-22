@@ -183,8 +183,13 @@ class UserGameplayScene(BaseScene):
         self.exit_sprite.empty()
         self.collectible_sprite.empty()
         self.coin_sprite.empty()
+        # incrementing level
+        self.game.settings['LEVEL'] = self.game.settings['LEVEL'] + 1
+        self.game.settings_manager.save_settings(self.game.settings)
+        
         from game_states.userloadgame import UserLoadGame
         self.game.scene_manager.go_to(UserLoadGame(self.game, self.game.level_url))
+        # pass only game, and get level dynamically in userloadgame
         
     def get_player_spawnable_position(self):
         for y in range(len(self.level_data) - 1):  
