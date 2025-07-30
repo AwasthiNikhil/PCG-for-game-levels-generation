@@ -1,6 +1,7 @@
 from flask import Flask, request, Response, jsonify
 from io import StringIO
 import sys
+from flask_cors import CORS
 from database.NetworkManager import NetworkManager
 from classes.Grid import Grid
 from classes.LevelPostProcessor import LevelPostProcessor
@@ -14,6 +15,7 @@ from classes.graph.GraphLevelGenerator import GraphLevelGenerator
 from classes.transformer.leveltransformergenerator import LevelTransformerGenerator
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/generate/<int:level_type>', methods=['GET'])
 def generate_level(level_type):

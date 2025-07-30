@@ -14,3 +14,9 @@ class Grid:
         else:
             for line in lines:
                 print(line)
+    def get(self, x, y):
+        """Safely get the value at grid[y][x] if within bounds."""
+        if 0 <= y < self.height and 0 <= x < self.width:
+            return self.grid[y][x]
+        else:
+            raise IndexError(f"Coordinates ({x}, {y}) are out of bounds.")
