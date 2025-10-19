@@ -50,8 +50,8 @@ def generate_level(level_type):
         level_generator = RandomLevelGenerator(grid=grid, wall_prob=wall_probability)
     elif level_type == 2:
         level_generator = NativePerlinLevelGenerator(grid=grid, threshold=threshold)
-    elif level_type == 3:
-        level_generator = SimplexLevelGenerator(grid=grid)
+    # elif level_type == 3:
+    #     level_generator = SimplexLevelGenerator(grid=grid)
     elif level_type == 4:
         level_generator = CellularAutomataLevelGenerator(grid=grid, wall_probability=wall_probability, iterations=iterations)
     elif level_type == 5:
@@ -85,4 +85,4 @@ def generate_level(level_type):
     })
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run()
