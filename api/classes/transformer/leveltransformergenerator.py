@@ -1,3 +1,4 @@
+import hashlib
 import torch
 import numpy as np
 import random
@@ -29,7 +30,10 @@ class LevelTransformerGenerator:
         return model, char2idx, idx2char
 
     def generate(self, seed=None):
-        # Generate a level using the transformer model
+        # Generate a level using the transformer model. Sampling uses its own
+        # generator seeded from `seed` (a stable hash, unlike Python's hash()),
+        # so the same seed gives the same level.
+        rng = np.random.default_rng(int(hashlib.sha256(str(seed).encode()).hexdigest()[:16], 16) if seed is not None else None)
         prompt = '.' * self.width  # Starting sequence
         input_ids = [self.char2idx[c] for c in prompt]
         generated = input_ids[:]
@@ -40,7 +44,7 @@ class LevelTransformerGenerator:
                 logits = self.model(x)
                 probs = torch.softmax(logits[0], dim=0).cpu().numpy()
 
-            next_token = np.random.choice(len(probs), p=probs)
+            next_token = rng.choice(len(probs), p=probs)
             generated.append(next_token)
 
         # Convert generated tokens back to characters

@@ -11,11 +11,9 @@ class BSPLevelGenerator:
             self.rooms = []
 
     def generate(self, seed=None):
-        if seed is not None:
-            random.seed(seed)
-        else:
-            seed = random.randint(0, 1000)
-            random.seed(seed)
+        # Own generator per call: the same seed gives the same level, and
+        # concurrent requests don't share random state.
+        self.rng = random.Random(seed)
 
         print(f'seed:{seed}')
 
@@ -24,7 +22,7 @@ class BSPLevelGenerator:
             for x in range(self.grid.width):
                 self.grid.grid[y][x] = self.wall_char
 
-        root = BSPNode(0, 0, self.grid.width, self.grid.height)
+        root = BSPNode(0, 0, self.grid.width, self.grid.height, self.rng)
         leaves = root.split(self.min_leaf_size, self.max_leaf_size)
 
         for leaf in leaves:
@@ -47,7 +45,7 @@ class BSPLevelGenerator:
     def _carve_corridor(self, a, b):
         x1, y1 = a
         x2, y2 = b
-        if random.random() < 0.5:
+        if self.rng.random() < 0.5:
             self._carve_h_corridor(x1, x2, y1)
             self._carve_v_corridor(y1, y2, x2)
         else:

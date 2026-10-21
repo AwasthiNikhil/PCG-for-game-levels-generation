@@ -12,11 +12,9 @@ GRADIENTS = [
 ]
 # constants END
 
-def generate_permutation_table(seed=None):
-    if seed is not None:
-        random.seed(seed)
+def generate_permutation_table(rng):
     p = list(range(256))
-    random.shuffle(p)
+    rng.shuffle(p)
     return p * 2  # Repeat to avoid overflow
 
 def dot(g, x, y):
@@ -78,14 +76,12 @@ class SimplexLevelGenerator:
         self.wall_char = '2'
     
     def generate(self, seed=None):
-        if seed is not None:
-            random.seed(seed)
-        else:
-            seed = random.randint(0, 1000)
-            random.seed(seed)
+        # Own generator per call: the same seed gives the same level, and
+        # concurrent requests don't share random state.
+        self.rng = random.Random(seed)
 
         print(f'seed:{seed}')
-        perm = generate_permutation_table(seed)
+        perm = generate_permutation_table(self.rng)
 
         for y in range(self.grid.height):
             for x in range(self.grid.width):

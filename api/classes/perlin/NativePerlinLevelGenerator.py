@@ -18,13 +18,13 @@ def dot_grid_gradient(ix, iy, x, y, grad_table):
     gradient = grad_table[iy % len(grad_table)][ix % len(grad_table[0])]
     return dx * gradient[0] + dy * gradient[1]
 
-def generate_gradient_table(width, height):
+def generate_gradient_table(width, height, rng):
     """Generate pseudo-random 2D unit vectors (gradients) at grid points"""
     table = []
     for y in range(height + 1):
         row = []
         for x in range(width + 1):
-            angle = random.uniform(0, 2 * math.pi)
+            angle = rng.uniform(0, 2 * math.pi)
             row.append((math.cos(angle), math.sin(angle)))
         table.append(row)
     return table
@@ -63,14 +63,12 @@ class NativePerlinLevelGenerator:
         self.threshold = threshold
 
     def generate(self, seed=None):
-        if seed is not None:
-            random.seed(seed)
-        else:
-            seed = random.randint(0, 10000)
-            random.seed(seed)
+        # Own generator per call: the same seed gives the same level, and
+        # concurrent requests don't share random state.
+        self.rng = random.Random(seed)
             
         print(f'seed: {seed}')
-        grad_table = generate_gradient_table(self.grid.width, self.grid.height)
+        grad_table = generate_gradient_table(self.grid.width, self.grid.height, self.rng)
 
         # Generate initial grid
         for y in range(self.grid.height):

@@ -7,14 +7,14 @@ class RandomLevelGenerator:
         self.wall_prob = wall_prob
 
     def generate(self, seed=None):
-        # Set the random seed if provided
-        if seed is not None:
-            random.seed(seed)
+        # Own generator per call: the same seed gives the same level, and
+        # concurrent requests don't share random state.
+        self.rng = random.Random(seed)
 
         # Fill the inner grid with walls and floors
         for y in range(1, self.grid.height - 1):
             for x in range(1, self.grid.width - 1):
-                if random.random() < self.wall_prob:
+                if self.rng.random() < self.wall_prob:
                     self.grid.grid[y][x] = WALL_CHAR
                 else:
                     self.grid.grid[y][x] = FLOOR_CHAR

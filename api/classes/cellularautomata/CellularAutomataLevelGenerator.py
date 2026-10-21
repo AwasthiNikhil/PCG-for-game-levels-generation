@@ -8,11 +8,9 @@ class CellularAutomataLevelGenerator:
         self.wall_char = '2'
 
     def generate(self, seed=None):
-        if seed is not None:
-            random.seed(seed)
-        else:
-            seed = random.randint(0, 1000)
-            random.seed(seed)
+        # Own generator per call: the same seed gives the same level, and
+        # concurrent requests don't share random state.
+        self.rng = random.Random(seed)
 
         print(f'seed:{seed}')
 
@@ -22,7 +20,7 @@ class CellularAutomataLevelGenerator:
                 if self._is_border(x, y):
                     self.grid.grid[y][x] = self.wall_char
                 else:
-                    if random.random() < self.fill_percent:
+                    if self.rng.random() < self.fill_percent:
                         self.grid.grid[y][x] = self.wall_char
                     else:
                         self.grid.grid[y][x] = self.floor_char

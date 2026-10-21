@@ -1,4 +1,5 @@
 import os
+import random
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.NetworkManager import NetworkManager
@@ -12,6 +13,9 @@ from classes.bsp.BSPLevelGenerator import BSPLevelGenerator
 from classes.wfc.WFCLevelGenerator import WFCLevelGenerator
 from classes.graph.GraphLevelGenerator import GraphLevelGenerator
 from classes.transformer.leveltransformergenerator import LevelTransformerGenerator
+from classes.rooms.RoomLevelGenerator import RoomLevelGenerator
+from placement import plan_route, good_enough
+from platformize import platformize
 
 app = Flask(__name__)
 CORS(app)
@@ -43,48 +47,78 @@ def generate_level(level_type):
     max_rooms = safe_int(request.args.get('max_rooms'), 15)
     max_room_size = safe_int(request.args.get('max_room_size'), 8)
     iterations = safe_int(request.args.get('iterations'), 1)
+    use_platformize = request.args.get('platformize', '1') != '0'
 
-    # Initialize grid and generator
-    grid = Grid(width, height)
-    level_generator = None
+    params = dict(width=width, height=height, scale=scale, min_leaf_size=min_leaf_size, max_leaf_size=max_leaf_size,
+                  wall_probability=wall_probability, threshold=threshold, min_room_size=min_room_size,
+                  max_rooms=max_rooms, max_room_size=max_room_size, iterations=iterations,
+                  platformize=use_platformize)
+    if level_type not in GENERATORS:
+        return jsonify({"error": "Invalid level type"}), 400
 
-    if level_type == 1:
-        level_generator = RandomLevelGenerator(grid=grid, wall_prob=wall_probability)
-    elif level_type == 2:
-        level_generator = NativePerlinLevelGenerator(grid=grid, threshold=threshold)
-    elif level_type == 3:
-        level_generator = SimplexLevelGenerator(grid=grid, scale=scale, threshold=threshold)
-    elif level_type == 4:
-        level_generator = CellularAutomataLevelGenerator(grid=grid, wall_probability=wall_probability, iterations=iterations)
-    elif level_type == 5:
-        level_generator = BSPLevelGenerator(grid, min_leaf_size=min_leaf_size, max_leaf_size=max_leaf_size)
-    elif level_type == 6:
-        level_generator = GraphLevelGenerator(grid, max_rooms=max_rooms, min_room_size=min_room_size, max_room_size=max_room_size)
-    elif level_type == 7:
-        level_generator = LevelTransformerGenerator(grid, width=width, height=height)
-    else:
-        return jsonify({
-            "error": "Invalid level type"
-        }), 400
-
-    level_generator.generate(seed=seed if seed else None)
-
-    if level_type == 1:
-        post_processor = LevelPostProcessor(grid)
-        post_processor.remove_isolated_walls()
-
-    # Convert the grid to a 2D list
-    grid_array = [[grid.get(x, y) for x in range(grid.width)] for y in range(grid.height)]
+    # Generate, then place start/key/exit on a reachable route. Poor levels
+    # (little reachable space or a short route) are regenerated; the best of
+    # the attempts is kept. The transformer is slow, so it gets fewer tries.
+    base_seed = seed or str(random.randrange(10 ** 9))
+    tries = 2 if level_type == 7 else MAX_TRIES
+    best = None
+    for attempt in range(tries):
+        attempt_seed = base_seed if attempt == 0 else f"{base_seed}-{attempt}"
+        grid_array = build_grid(level_type, params, attempt_seed)
+        plan = plan_route(grid_array)
+        score = (good_enough(plan), plan["route"] * plan["reach_share"]) if plan else (False, -1)
+        if best is None or score > best[0]:
+            best = (score, grid_array, plan, attempt_seed, attempt + 1)
+        if score[0]:
+            break
+    _, grid_array, plan, used_seed, attempts = best
 
     return jsonify({
         "metadata": {
-            "seed": seed,
+            "seed": used_seed,
             "level_type": level_type,
             "width": width,
-            "height": height
+            "height": height,
+            "attempts": attempts,
+            "route": plan["route"] if plan else None,
+            "reach_share": plan["reach_share"] if plan else None,
         },
-        "grid": grid_array
+        "grid": grid_array,
+        # [x, y] cells; null if the level has nowhere to stand (the game falls back)
+        "start": plan["start"] if plan else None,
+        "key": plan["key"] if plan else None,
+        "exit": plan["exit"] if plan else None,
     })
+
+
+MAX_TRIES = 5
+GENERATORS = {
+    1: lambda g, p: RandomLevelGenerator(grid=g, wall_prob=p['wall_probability']),
+    2: lambda g, p: NativePerlinLevelGenerator(grid=g, threshold=p['threshold']),
+    3: lambda g, p: SimplexLevelGenerator(grid=g, scale=p['scale'], threshold=p['threshold']),
+    4: lambda g, p: CellularAutomataLevelGenerator(grid=g, wall_probability=p['wall_probability'], iterations=p['iterations']),
+    5: lambda g, p: BSPLevelGenerator(g, min_leaf_size=p['min_leaf_size'], max_leaf_size=p['max_leaf_size']),
+    6: lambda g, p: GraphLevelGenerator(g, max_rooms=p['max_rooms'], min_room_size=p['min_room_size'], max_room_size=p['max_room_size']),
+    7: lambda g, p: LevelTransformerGenerator(g, width=p['width'], height=p['height']),
+    8: lambda g, p: RoomLevelGenerator(g),
+}
+
+
+def build_grid(level_type, params, seed):
+    grid = Grid(params['width'], params['height'])
+    GENERATORS[level_type](grid, params).generate(seed=seed)
+    if level_type == 1:
+        LevelPostProcessor(grid).remove_isolated_walls()
+    cells = [[grid.get(x, y) for x in range(grid.width)] for y in range(grid.height)]
+    # The top-down style generators get ledges, doors and ceiling holes so they
+    # work as platformer levels (rooms are built for it; the transformer isn't touched).
+    if params['platformize'] and level_type in PLATFORMIZED:
+        platformize(cells, random.Random(f"{seed}:platformize"))
+    return cells
+
+
+PLATFORMIZED = {1, 2, 3, 4, 5, 6}
+
 
 if __name__ == '__main__':
     # 5055, not Flask's default 5000: macOS uses 5000 for AirPlay.

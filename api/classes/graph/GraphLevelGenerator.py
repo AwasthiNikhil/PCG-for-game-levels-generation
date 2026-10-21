@@ -12,11 +12,9 @@ class GraphLevelGenerator:
         self.rooms = []
 
     def generate(self, seed=None):
-        if seed is not None:
-            random.seed(seed)
-        else:
-            seed = random.randint(0, 1000)
-            random.seed(seed)
+        # Own generator per call: the same seed gives the same level, and
+        # concurrent requests don't share random state.
+        self.rng = random.Random(seed)
         print(f'seed:{seed}')
 
         self._generate_rooms()
@@ -26,10 +24,10 @@ class GraphLevelGenerator:
     def _generate_rooms(self):
         attempts = 0
         while len(self.rooms) < self.max_rooms and attempts < self.max_rooms * 10:
-            w = random.randint(self.min_room_size, self.max_room_size)
-            h = random.randint(self.min_room_size, self.max_room_size)
-            x = random.randint(1, self.grid.width - w - 2)
-            y = random.randint(1, self.grid.height - h - 2)
+            w = self.rng.randint(self.min_room_size, self.max_room_size)
+            h = self.rng.randint(self.min_room_size, self.max_room_size)
+            x = self.rng.randint(1, self.grid.width - w - 2)
+            y = self.rng.randint(1, self.grid.height - h - 2)
             new_room = (x, y, w, h)
 
             if self._room_overlaps(new_room):
@@ -65,7 +63,7 @@ class GraphLevelGenerator:
             cx1, cy1 = x1 + w1 // 2, y1 + h1 // 2
             cx2, cy2 = x2 + w2 // 2, y2 + h2 // 2
 
-            if random.random() < 0.5:
+            if self.rng.random() < 0.5:
                 self._carve_h_corridor(cx1, cx2, cy1)
                 self._carve_v_corridor(cy1, cy2, cx2)
             else:
