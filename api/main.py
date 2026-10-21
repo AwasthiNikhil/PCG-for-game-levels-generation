@@ -44,6 +44,7 @@ def generate_level(level_type):
     threshold = safe_float(request.args.get('threshold'), 0.0) /100
     min_room_size = safe_int(request.args.get('min_room_size'), 3)
     max_rooms = safe_int(request.args.get('max_rooms'), 15)
+    max_room_size = safe_int(request.args.get('max_room_size'), 8)
     iterations = safe_int(request.args.get('iterations'), 1)
     
     # Redirect print output
@@ -68,7 +69,7 @@ def generate_level(level_type):
     elif level_type == 5:
         level_generator = BSPLevelGenerator(grid, min_leaf_size=min_leaf_size, max_leaf_size=max_leaf_size)
     elif level_type == 6:
-        level_generator = GraphLevelGenerator(grid, max_rooms=max_rooms, min_room_size=min_room_size, max_room_size=max_rooms)
+        level_generator = GraphLevelGenerator(grid, max_rooms=max_rooms, min_room_size=min_room_size, max_room_size=max_room_size)
     elif level_type == 7:
         level_generator = LevelTransformerGenerator(grid, width=width, height=height)
     else:

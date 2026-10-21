@@ -33,13 +33,14 @@ def generate_level(level_type):
     width = safe_int(request.args.get('x'), 25)
     height = safe_int(request.args.get('y'), 25)
     seed = request.args.get('seed', None)
-    scale = safe_float(request.args.get('scale'), 2.0)
+    scale = safe_float(request.args.get('scale'), 6.0)  # simplex feature size; 2 is near-static noise
     min_leaf_size = safe_int(request.args.get('min_leaf_size'), 8)
     max_leaf_size = safe_int(request.args.get('max_leaf_size'), 15)
     wall_probability = safe_float(request.args.get('wall_probability'), 0.45) / 100
     threshold = safe_float(request.args.get('threshold'), 0.0) / 100
     min_room_size = safe_int(request.args.get('min_room_size'), 3)
     max_rooms = safe_int(request.args.get('max_rooms'), 15)
+    max_room_size = safe_int(request.args.get('max_room_size'), 8)
     iterations = safe_int(request.args.get('iterations'), 1)
 
     # Initialize grid and generator
@@ -50,14 +51,14 @@ def generate_level(level_type):
         level_generator = RandomLevelGenerator(grid=grid, wall_prob=wall_probability)
     elif level_type == 2:
         level_generator = NativePerlinLevelGenerator(grid=grid, threshold=threshold)
-    # elif level_type == 3:
-    #     level_generator = SimplexLevelGenerator(grid=grid)
+    elif level_type == 3:
+        level_generator = SimplexLevelGenerator(grid=grid, scale=scale, threshold=threshold)
     elif level_type == 4:
         level_generator = CellularAutomataLevelGenerator(grid=grid, wall_probability=wall_probability, iterations=iterations)
     elif level_type == 5:
         level_generator = BSPLevelGenerator(grid, min_leaf_size=min_leaf_size, max_leaf_size=max_leaf_size)
     elif level_type == 6:
-        level_generator = GraphLevelGenerator(grid, max_rooms=max_rooms, min_room_size=min_room_size, max_room_size=max_rooms)
+        level_generator = GraphLevelGenerator(grid, max_rooms=max_rooms, min_room_size=min_room_size, max_room_size=max_room_size)
     elif level_type == 7:
         level_generator = LevelTransformerGenerator(grid, width=width, height=height)
     else:

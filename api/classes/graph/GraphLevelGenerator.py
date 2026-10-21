@@ -2,11 +2,13 @@ import random
 
 class GraphLevelGenerator:
     def __init__(self, grid, max_rooms=15, min_room_size=3, max_room_size=10):
-        # todo: check edge cases like min cells cant contain max room etc 
         self.grid = grid
         self.max_rooms = max_rooms
-        self.min_room_size = min_room_size
-        self.max_room_size = max_room_size
+        # A room plus its 1-cell border on each side must fit inside the grid,
+        # otherwise _generate_rooms has no valid position to pick from.
+        fit = max(1, min(grid.width, grid.height) - 3)
+        self.max_room_size = max(1, min(max_room_size, fit))
+        self.min_room_size = max(1, min(min_room_size, self.max_room_size))
         self.rooms = []
 
     def generate(self, seed=None):
