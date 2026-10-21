@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from database.NetworkManager import NetworkManager
@@ -36,7 +37,7 @@ def generate_level(level_type):
     scale = safe_float(request.args.get('scale'), 6.0)  # simplex feature size; 2 is near-static noise
     min_leaf_size = safe_int(request.args.get('min_leaf_size'), 8)
     max_leaf_size = safe_int(request.args.get('max_leaf_size'), 15)
-    wall_probability = safe_float(request.args.get('wall_probability'), 0.45) / 100
+    wall_probability = safe_float(request.args.get('wall_probability'), 45) / 100  # percent
     threshold = safe_float(request.args.get('threshold'), 0.0) / 100
     min_room_size = safe_int(request.args.get('min_room_size'), 3)
     max_rooms = safe_int(request.args.get('max_rooms'), 15)
@@ -86,4 +87,5 @@ def generate_level(level_type):
     })
 
 if __name__ == '__main__':
-    app.run()
+    # 5055, not Flask's default 5000: macOS uses 5000 for AirPlay.
+    app.run(host='127.0.0.1', port=int(os.environ.get('PORT', 5055)))
