@@ -22,10 +22,16 @@ Every generator fills the same grid: `1` is floor and `2` is wall.
 | 4 | Cellular automata | A random fill, smoothed for `iterations` rounds |
 | 5 | BSP | Binary space partitioning into rooms |
 | 6 | Graph | Rooms that don't overlap, joined by L-shaped corridors |
-| 7 | Transformer | A small character-level transformer (PyTorch) trained on level text. It lives in `api/classes/transformer/` |
+| 7 | Transformer | A small character-level transformer (PyTorch) trained on the Lode Runner levels from [The Video Game Level Corpus](https://github.com/TheVGLC/TheVGLC). It lives in `api/classes/transformer/`; the training script is `algo/transformer/main.py` |
 | 8 | Rooms | Spelunky-style: a grid of rooms with a guaranteed route, each room stamped from hand-made platformer templates (`api/classes/rooms/`) |
+| 9 | Mario model | A transformer trained on VGLC's Super Mario Bros levels, column by column (`api/classes/transformer/tilegpt.py`) |
+| 10 | Lode Runner model (retrained) | The Lode Runner transformer retrained with the same fixes; for comparison only, no level uses it |
 
-As levels get harder, the web game moves through types 1, 4, 6, 2, 8 and 7.
+As levels get harder, the web game moves through types 1, 4, 6, 2, 8, 9 and 7.
+
+`docs/transformer-experiments.md` compares the transformers: what was wrong
+with the original Lode Runner model, how it was retrained, and how the Super
+Mario Bros model compares, both as a model and as levels in this game.
 See `src/levels.js` in the `pcg` repo.
 
 ## Run the API
@@ -141,3 +147,19 @@ cd game && ../.venv/bin/python main.py
 | `worldgeneration/` | An earlier copy of the generator classes |
 | `game_learnings/` | pygame tutorial projects from learning the engine |
 | `diagrams/`, `out/` | PlantUML sources and the rendered UML diagrams |
+
+## Credits
+
+The transformers were trained on levels from **The Video Game Level Corpus
+(VGLC)**: https://github.com/TheVGLC/TheVGLC. Type 7 uses its Lode Runner
+levels, type 9 its Super Mario Bros levels, and type 10 its Lode Runner levels
+again. VGLC is released under the MIT License, Copyright (c) 2016 Adam
+Summerville, Santiago Ontañón, Sam Snodgrass.
+
+> Summerville, A. J., Snodgrass, S., Mateas, M., and Ontañón, S. (2016).
+> *The VGLC: The Video Game Level Corpus.* Proceedings of the 7th Workshop on
+> Procedural Content Generation.
+
+Only solid tiles become walls in this game: Lode Runner's bricks, and Mario's
+ground, blocks, pipes and cannons. Everything else (ladders, ropes, coins,
+gold, enemies, spawn points) becomes open space.

@@ -50,7 +50,8 @@ class LevelTransformerGenerator:
         # Convert generated tokens back to characters
         generated_str = ''.join(self.idx2char[i] for i in generated)
 
-        # Replace 'b' and 'B' with '1', all other characters with '2'
+        # Lode Runner bricks ('b', 'B') become walls ('2'); ladders, ropes, gold,
+        # enemies and the spawn point all become open space ('1')
         transformed_str = ''.join('2' if ch in ['b', 'B'] else '1' for ch in generated_str)
 
         # Create a new grid with added boundaries

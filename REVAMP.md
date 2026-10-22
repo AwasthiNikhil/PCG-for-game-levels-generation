@@ -44,8 +44,13 @@ Status: `[x]` done and verified · `[~]` in progress · `[ ]` not started
 
 ## 6. Transformer
 
-- [ ] Generate-and-test: sample several, keep only levels that pass the solver
-- [ ] Optional: retrain on platformer levels (for example Super Mario levels from the Video Game Level Corpus)
+Full write-up: `docs/transformer-experiments.md`.
+
+- [x] Find out why its levels lack structure. The original layer was built without `batch_first=True`, so attention ran across batch samples and the model used only the previous tile: a first-order Markov chain. Changing the 99-tile history moves its prediction by exactly 0.00. Its rows were also joined with no separator. (An earlier note here said the faint repeat at 28 tiles was the Lode Runner width; VGLC's Lode Runner levels are 32 wide, and the repeat was noise.)
+- [x] Retrain with the fixes (`algo/transformer/train_tilegpt.py`): attention along the level, end-of-slice tokens, a place-in-slice embedding, a 7–17 slice context, a loss at every position, held-out levels. Lode Runner held-out perplexity 2.61 → 2.31
+- [x] Train on Super Mario Bros from the same corpus (type 9). The most faithful model (horizontal wall runs 5.4 vs 5.2 in real Mario). It needs post-processing to be playable here, and it's used for levels 13–16
+- [ ] Generate-and-test: sample several, keep the best by the solver's score (the API already keeps the best of 2 attempts)
+- [ ] Faster generation: the models recompute the whole context for every tile (1–2.5 s per level); caching attention keys and values would cut that a lot
 
 ## Baseline (before the revamp)
 
@@ -115,5 +120,6 @@ placed far apart. Coins are still scattered at random; step 4 places them.
 - 2026-10-21: step 2 done. Room generator (type 8) for levels 9–12. Transformer sampling seeded, so all 8 generators reproduce a level from its seed.
 - 2026-10-21: step 5 done apart from the optional daily seed: per-call random generators everywhere.
 - 2026-10-21: step 3 done: platformer post-processing for the six older generators.
+- 2026-10-22: step 6 mostly done: the original transformer's bug found, Lode Runner retrained, a Super Mario Bros model added for levels 13–16. See `docs/transformer-experiments.md`.
 - 2026-10-21: step 4 started: `api/content.py` written. Paused here. Next: wire it into `main2.py` (needs a `level` query parameter), use it in `Game.js`, then benchmark and test.
 - 2026-10-21: game bug found while testing room levels: enemies fell through floors, bats flew through walls, and icicles never shattered. Moving enemies were marked immovable, and Arcade physics never separates two immovable bodies. Fixed in the game (`pcg`).
