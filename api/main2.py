@@ -14,6 +14,7 @@ from classes.wfc.WFCLevelGenerator import WFCLevelGenerator
 from classes.graph.GraphLevelGenerator import GraphLevelGenerator
 from classes.transformer.leveltransformergenerator import LevelTransformerGenerator
 from classes.rooms.RoomLevelGenerator import RoomLevelGenerator
+from classes.transformer.TileGPTLevelGenerator import TileGPTLevelGenerator
 from placement import plan_route, good_enough
 from platformize import platformize
 
@@ -60,7 +61,7 @@ def generate_level(level_type):
     # (little reachable space or a short route) are regenerated; the best of
     # the attempts is kept. The transformer is slow, so it gets fewer tries.
     base_seed = seed or str(random.randrange(10 ** 9))
-    tries = 2 if level_type == 7 else MAX_TRIES
+    tries = 2 if level_type in SLOW else MAX_TRIES
     best = None
     for attempt in range(tries):
         attempt_seed = base_seed if attempt == 0 else f"{base_seed}-{attempt}"
@@ -92,6 +93,7 @@ def generate_level(level_type):
 
 
 MAX_TRIES = 5
+SLOW = {7, 9, 10}  # model-based generators
 GENERATORS = {
     1: lambda g, p: RandomLevelGenerator(grid=g, wall_prob=p['wall_probability']),
     2: lambda g, p: NativePerlinLevelGenerator(grid=g, threshold=p['threshold']),
@@ -101,6 +103,8 @@ GENERATORS = {
     6: lambda g, p: GraphLevelGenerator(g, max_rooms=p['max_rooms'], min_room_size=p['min_room_size'], max_room_size=p['max_room_size']),
     7: lambda g, p: LevelTransformerGenerator(g, width=p['width'], height=p['height']),
     8: lambda g, p: RoomLevelGenerator(g),
+    9: lambda g, p: TileGPTLevelGenerator(g, 'mario'),       # trained on VGLC Super Mario Bros
+    10: lambda g, p: TileGPTLevelGenerator(g, 'loderunner'), # retrained Lode Runner, for comparison
 }
 
 
@@ -110,14 +114,15 @@ def build_grid(level_type, params, seed):
     if level_type == 1:
         LevelPostProcessor(grid).remove_isolated_walls()
     cells = [[grid.get(x, y) for x in range(grid.width)] for y in range(grid.height)]
-    # The top-down style generators get ledges, doors and ceiling holes so they
-    # work as platformer levels (rooms are built for it; the transformer isn't touched).
+    # The top-down style generators and the Mario model get ledges, doors and
+    # ceiling holes so they work as platformer levels (rooms are built for it;
+    # the Lode Runner models are left as generated).
     if params['platformize'] and level_type in PLATFORMIZED:
         platformize(cells, random.Random(f"{seed}:platformize"))
     return cells
 
 
-PLATFORMIZED = {1, 2, 3, 4, 5, 6}
+PLATFORMIZED = {1, 2, 3, 4, 5, 6, 9}  # 9: Mario's sealed ground lines need joining
 
 
 if __name__ == '__main__':

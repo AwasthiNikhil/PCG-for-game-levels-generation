@@ -32,7 +32,9 @@ GENERATORS = {
     6: ("Graph", 6, "5–6"),
     2: ("Perlin", 8, "7–8"),
     8: ("Rooms", 10, "9–12"),
-    7: ("Transformer", 14, "13+"),
+    9: ("Mario model", 14, "13–16"),
+    7: ("Lode Runner model (original)", 18, "17+"),
+    10: ("Lode Runner model (retrained)", 18, "not used"),
     3: ("Simplex", 6, "not used"),
     5: ("BSP", 6, "not used"),
 }
@@ -91,7 +93,7 @@ def run(n, old=False, raw=False):
     rng = random.Random(7)
     rows = []
     for gtype, (name, level, used) in GENERATORS.items():
-        count = max(10, n // 5) if gtype == 7 else n  # the transformer is slow
+        count = max(10, n // 5) if gtype in (7, 9, 10) else n  # the models are slow
         params = game_params(level)
         query = "&".join(f"{k}={v}" for k, v in params.items()) + ("&platformize=0" if raw else "")
         results, times = [], []
